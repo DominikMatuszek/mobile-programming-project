@@ -80,7 +80,27 @@ async def create_lobby(user_info: AuthData, response: Response):
     
 @app.get("/getlobbies", status_code=200)
 async def get_lobbies():
-    return list(lobbies.keys())
+    return list(lobbies.items())
+
+class LobbyJoinRequest(BaseModel):
+    username: str 
+    password: str
+    lobby_owner_username: str
+
+@app.post("/joinlobby", status_code=200)
+async def join_lobby(data: LobbyJoinRequest, response: Response):
+    if not check_credentials(data.username, data.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    owner = data.lobby_owner_username
+
+    if owner not in lobbies or lobbies[owner] is not None:
+        response.status_code = status.HTTP_409_CONFLICT
+        return 
+
+    lobbies[owner] = data.username
+    
 
 @app.post("/leavelobby", status_code=200)
 async def leave_lobby(user_info: AuthData, response: Response):

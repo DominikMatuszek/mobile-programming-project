@@ -1,8 +1,6 @@
 import bcrypt 
 
-def check_credentials(login, password, db):
-    print("check credentials")
-    
+def check_credentials(login, password, db):  
     password = password.encode('utf8')
     
     with db.cursor() as cursor:

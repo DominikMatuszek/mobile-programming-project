@@ -1,13 +1,11 @@
 package com.example.app;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.google.android.material.snackbar.Snackbar;
-
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -15,8 +13,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.app.databinding.ActivityMainBinding;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,5 +66,34 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    public void saveString(String key, String value) {
+        try {
+            FileOutputStream stream = openFileOutput(key, MODE_PRIVATE);
+            OutputStreamWriter writer = new OutputStreamWriter(stream);
+
+            writer.write(value);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Returns 0 if the key does not exist
+    @Nullable
+    public String getString(String key) {
+
+        try {
+            FileInputStream stream = openFileInput(key);
+            Scanner scanner = new Scanner(stream);
+
+            return scanner.nextLine();
+
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 }

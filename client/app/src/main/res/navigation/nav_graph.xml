@@ -30,6 +30,22 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.app.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_lobbiesFragment"
+            app:destination="@id/lobbiesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lobbiesFragment"
+        android:name="com.example.app.LobbiesFragment"
+        android:label="Lobbies">
+        <action
+            android:id="@+id/action_lobbiesFragment_to_singularLobbyFragment"
+            app:destination="@id/singularLobbyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/singularLobbyFragment"
+        android:name="com.example.app.SingularLobbyFragment"
+        android:label="SingularLobbyFragment" />
 </navigation>

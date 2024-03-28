@@ -32,6 +32,34 @@ public class SingularLobbyFragment extends Fragment {
 
     }
 
+    private void leaveLobby() {
+        new Thread(() -> {
+            try {
+                MainActivity activity = (MainActivity) getActivity();
+                String username = activity.getString("username");
+                String password = activity.getString("password");
+
+                String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
+
+                URL url = new URL("http://52.169.201.105:8000/leavelobby");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setDoOutput(true);
+                connection.getOutputStream().write(jsonInputString.getBytes());
+
+                int code = connection.getResponseCode();
+
+                if (code != 200) {
+                    System.out.println("Failed to leave lobby, we're gonna have a bad time. Response code: " + code);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private OpponentInfo getOpponent(String username) {
         try {
             URL url = new URL("http://52.169.201.105:8000/getlobbies");
@@ -100,6 +128,7 @@ public class SingularLobbyFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        leaveLobby();
         super.onDestroyView();
         binding = null;
     }

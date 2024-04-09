@@ -8,7 +8,9 @@ from auth import check_credentials
 
 conn = psycopg2.connect(database="dominik",
                         user="dominik",
-                        port="5432")
+                        port="5432",
+			password="dominik",
+			host="localhost")
 
 app = FastAPI()
 

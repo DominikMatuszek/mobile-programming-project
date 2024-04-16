@@ -89,7 +89,7 @@ class PlayerMatcher:
         if len(matches) == 0:
             return False 
         
-        return matches[0].match_is_full()
+        return matches[0].match_is_full() and not matches[0].match_has_started()
       
     def start_match(self, host, id):
         if not self.can_game_be_started(host):

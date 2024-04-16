@@ -13,9 +13,7 @@ class Goal:
             return
         
         dist = geodesic((self.lat, self.lon), (lat, lon)).meters
-        
-        print(dist)
-                
+                        
         if dist < self.min_dist:
             self.scorer = player
         
@@ -27,6 +25,8 @@ class Goal:
     
 class GoalTracker:
     def __init__(self, target_coords):
+        self.target_coords = target_coords
+        
         goals = []
         
         for coordinates in target_coords:
@@ -55,6 +55,14 @@ class GoalTracker:
                 scores[scorer] = 1
 
         return scores
+    
+    def get_target_coords(self):
+        return self.target_coords
+    
+    def get_target_coords_with_scorers(self):
+        scorers = [goal.get_scorer() for goal in self.goals if goal.was_scored()]
+        
+        return list(zip(self.target_coords, scorers))
 
 def get_goal_tracker_with_simple_goals():
     from geo import get_simple_location_generator
@@ -98,6 +106,7 @@ def main():
     tracker.report_position("gienek", 0, 0)
     
     print(tracker.get_scores())
+    print(tracker.get_target_coords_with_scorers())
     
 if __name__ == "__main__":
     main()

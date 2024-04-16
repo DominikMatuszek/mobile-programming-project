@@ -4,6 +4,7 @@ import bcrypt
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 from auth import check_credentials
+from player_matcher import PlayerMatcher
 
 
 conn = psycopg2.connect(database="dominik",
@@ -61,7 +62,7 @@ async def login(data: AuthData, response: Response):
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return 
 
-lobbies = {}
+lobbies = PlayerMatcher()
 
 @app.post("/createlobby", status_code=200)
 async def create_lobby(user_info: AuthData, response: Response):
@@ -72,17 +73,17 @@ async def create_lobby(user_info: AuthData, response: Response):
     print(lobbies)
 
     username = user_info.username 
-
-    if username in lobbies: 
-        response.status_code = status.HTTP_409_CONFLICT
-        return 
     
+    if not lobbies.can_participate_in_match(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+    else: 
+        lobbies.create_match(username)
 
-    lobbies[username] = None 
     
 @app.get("/getlobbies", status_code=200)
 async def get_lobbies():
-    return list(lobbies.items())
+    return lobbies.get_open_matches()
 
 class LobbyJoinRequest(BaseModel):
     username: str 
@@ -97,12 +98,11 @@ async def join_lobby(data: LobbyJoinRequest, response: Response):
 
     owner = data.lobby_owner_username
 
-    if owner not in lobbies or lobbies[owner] is not None:
+    if not lobbies.can_join_match(host=owner, player=data.username):
         response.status_code = status.HTTP_409_CONFLICT
-        return 
+        return
 
-    lobbies[owner] = data.username
-    
+    lobbies.join_match(owner, data.username)    
 
 @app.post("/leavelobby", status_code=200)
 async def leave_lobby(user_info: AuthData, response: Response):
@@ -112,19 +112,8 @@ async def leave_lobby(user_info: AuthData, response: Response):
 
     username = user_info.username
 
-    try: 
-        friend = lobbies[username]
-        del lobbies[username]
-
-        if friend:
-            lobbies[friend] = None 
-        
-        return 
-    except KeyError:
-        for (k, v) in lobbies.items():
-            if v == username: 
-                lobbies[k] = None 
-                return 
-   
-    response.status_code = status.HTTP_409_CONFLICT
-    return 
+    if not lobbies.can_leave_match(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+    else:
+        lobbies.leave_match(username)

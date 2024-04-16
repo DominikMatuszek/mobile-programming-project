@@ -83,7 +83,7 @@ async def create_lobby(user_info: AuthData, response: Response):
     
 @app.get("/getlobbies", status_code=200)
 async def get_lobbies():
-    return lobbies.get_open_matches()
+    return lobbies.get_matches()
 
 class LobbyJoinRequest(BaseModel):
     username: str 

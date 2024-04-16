@@ -5,6 +5,9 @@ class PlayerMatcher:
     def __init__(self):
         self.match_list = []
     
+    def get_matches(self):
+        return [match.get_players() for match in self.match_list]
+    
     def get_open_matches(self):
         return [match.get_players() for match in self.match_list if not match.match_is_full() and not match.match_has_started()]        
     

@@ -150,7 +150,7 @@ async def start_match(data: AuthData, response: Response):
     else:
         lobbies.start_match(username)
 
-@app.get("/getmatchstate", status_code=200)
+@app.post("/getmatchstate", status_code=200)
 async def get_match_state(user_info: AuthData, response: Response):
     if not check_credentials(user_info.username, user_info.password, conn):
         response.status_code = status.HTTP_401_UNAUTHORIZED

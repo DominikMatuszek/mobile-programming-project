@@ -151,7 +151,7 @@ async def start_match(data: AuthData, response: Response):
         return
     else:       
         targets = lobbies.get_coords_for_match(username)
-        players = lobbies.get_players_for_match(username)
+        players = lobbies.get_player_list(username)
         
         host = players[0]
         guest = players[1]

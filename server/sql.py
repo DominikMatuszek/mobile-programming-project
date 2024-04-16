@@ -8,7 +8,7 @@ def add_match_to_database(host, guest, targets, conn):
         match_id = cursor.lastrowid
         
         for target in targets:
-            cursor.execute("INSERT INTO targets (match_id, x, y) VALUES (%s, %s, %s);", (match_id, target[0], target[1]))
+            cursor.execute("INSERT INTO targets (longtitude, latitude, match_id) VALUES (%s, %s, %s);", (target[0], target[1], match_id))
             
         cursor.execute("INSERT INTO results (player_id, match_id, won) VALUES (%s, %s, NULL);", (host, match_id))
         cursor.execute("INSERT INTO results (player_id, match_id, won) VALUES (%s, %s, NULL);", (guest, match_id))

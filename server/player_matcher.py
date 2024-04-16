@@ -1,8 +1,9 @@
 class Match:
-    def __init__(self, host):
+    def __init__(self, host, goals):
         self.player1 = host
         self.player2 = None
         self.started = False 
+        self.goals = goals
     
     def match_is_full(self):
         return self.player2 is not None
@@ -48,6 +49,10 @@ class Match:
     
     def get_players(self):
         return [self.player1, self.player2]
+    
+    def get_goals(self):
+        return self.goals
+    
     
 class PlayerMatcher:
     def __init__(self):
@@ -98,7 +103,7 @@ class PlayerMatcher:
         if not self.can_participate_in_match(player):
             raise ValueError("Player is already in a match")
         
-        match = Match(player)
+        match = Match(player, [])
         self.match_list.append(match)
         
     def join_match(self, host, player):
@@ -143,6 +148,17 @@ class PlayerMatcher:
         matches = self.get_matches_hosted_by(host)
         
         matches[0].start_match()
+    
+    def get_goals_for_match_owned_by(self, host):
+        matches = self.get_matches_hosted_by(host)
+        
+        if len(matches) > 1:
+            raise ValueError("Player should not be hosting more than one match")
+        
+        if len(matches) == 0:
+            return None 
+        
+        return matches[0].get_goals()
 
 def main():
     matcher = PlayerMatcher()
@@ -194,6 +210,8 @@ def main():
     matcher.join_match("dominik", "gienek")
     
     matcher.start_match("dominik")
+    
+    print(matcher.get_goals_for_match_owned_by("dominik"))
     
 if __name__ == "__main__":
     main()

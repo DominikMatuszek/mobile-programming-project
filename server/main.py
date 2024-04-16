@@ -117,3 +117,45 @@ async def leave_lobby(user_info: AuthData, response: Response):
         return
     else:
         lobbies.leave_match(username)
+
+class CoordinatesInfo(BaseModel):
+    username: str 
+    password: str
+    lon: float
+    lat: float
+    
+@app.post("/reportposition", status_code=200)
+async def report_position(data: CoordinatesInfo, response: Response):
+    if not check_credentials(data.username, data.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = data.username
+    lon = data.lon
+    lat = data.lat
+
+    lobbies.report_position_of(username, lon, lat)
+    
+@app.post("/startmatch", status_code=200)
+async def start_match(data: AuthData, response: Response):
+    if not check_credentials(data.username, data.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = data.username
+
+    if not lobbies.can_game_be_started(host=username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+    else:
+        lobbies.start_match(username)
+
+@app.get("/getmatchstate", status_code=200)
+async def get_match_state(user_info: AuthData, response: Response):
+    if not check_credentials(user_info.username, user_info.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = user_info.username
+
+    return lobbies.get_state_for_match(username)

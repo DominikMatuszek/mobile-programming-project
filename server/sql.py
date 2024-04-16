@@ -4,10 +4,14 @@ def add_match_to_database(host, guest, targets, conn):
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
     with conn.cursor() as cursor:
         cursor.execute("INSERT INTO matches (start_timestamp, end_timestamp) VALUES (%s, NULL);", (timestamp,))
+        cursor.execute("SELECT LASTVAL();")        
         
-        conn.commit()
+    
+        print(cursor.fetchone()[0])
         
-        match_id = cursor.lastrowid
+        match_id = cursor.fetchone()[0]
+        
+    
         
         for target in targets:
             cursor.execute("INSERT INTO targets (longtitude, latitude, match_id) VALUES (%s, %s, %s);", (target[0], target[1], match_id))

@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from auth import check_credentials
 from player_matcher import PlayerMatcher
 
+from sql import add_match_to_database
+
 
 conn = psycopg2.connect(database="dominik",
                         user="dominik",
@@ -147,8 +149,19 @@ async def start_match(data: AuthData, response: Response):
     if not lobbies.can_game_be_started(host=username):
         response.status_code = status.HTTP_409_CONFLICT
         return
-    else:
-        lobbies.start_match(username)
+    else:       
+        targets = lobbies.get_coords_for_match(username)
+        players = lobbies.get_players_for_match(username)
+        
+        host = players[0]
+        guest = players[1]
+        
+        game_id = add_match_to_database(host, guest, targets, conn)
+        
+        lobbies.start_match(username, game_id)
+
+        
+        
 
 @app.post("/getmatchstate", status_code=200)
 async def get_match_state(user_info: AuthData, response: Response):
@@ -157,5 +170,9 @@ async def get_match_state(user_info: AuthData, response: Response):
         return 
 
     username = user_info.username
+    
+    if not lobbies.is_match_started(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
 
     return lobbies.get_state_for_match(username)

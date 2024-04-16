@@ -91,13 +91,13 @@ class PlayerMatcher:
         
         return matches[0].match_is_full()
       
-    def start_match(self, host):
+    def start_match(self, host, id):
         if not self.can_game_be_started(host):
             raise ValueError("Match cannot be started")
         
         matches = self.get_matches_hosted_by(host)
         
-        matches[0].start_match()
+        matches[0].start_match(id)
     
     def get_state_for_match(self, host):
         matches = self.get_matches_hosted_by(host) + self.get_matches_guested_by(host)
@@ -132,6 +132,50 @@ class PlayerMatcher:
         
         matches[0].report_position(player, lon, lat)
         
+    def is_match_started(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return False
+        
+        return matches[0].match_has_started()
+    
+    def get_opponent(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
+        return matches[0].get_opponent(player)
+    
+    def get_player_list(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
+        return matches[0].get_players()
+    
+    def set_game_id_for_match(self, player, id):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            raise ValueError("Player is not in any match")
+        
+        matches[0].set_game_id(id)
+            
 
 def main():
     matcher = PlayerMatcher()

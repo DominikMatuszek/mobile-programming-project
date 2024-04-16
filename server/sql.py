@@ -2,7 +2,7 @@ import datetime
 
 def get_user_id(username, conn):
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id FROM players WHERE username = %s;", (username,))
+        cursor.execute("SELECT id FROM users WHERE username = %s;", (username,))
         
         result = cursor.fetchone()
         

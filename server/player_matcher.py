@@ -1,59 +1,6 @@
-class Match:
-    def __init__(self, host, goals):
-        self.player1 = host
-        self.player2 = None
-        self.started = False 
-        self.goals = goals
-    
-    def match_is_full(self):
-        return self.player2 is not None
-    
-    def is_player_host(self, player):
-        return player == self.player1
-    
-    def is_player_guest(self, player):
-        return player == self.player2
-    
-    def is_player_in_match(self, player):
-        return player == self.player1 or player == self.player2
-    
-    def quit_player(self, player):
-        if self.is_player_host(player):
-            self.player1 = self.player2
-            self.player2 = None
-        elif self.is_player_guest(player):
-            self.player2 = None
-        else:
-            raise ValueError("Player not in match")
-    
-    def match_is_empty(self):
-        return self.player2 is None and self.player1 is None
-    
-    def add_player(self, player):
-        if self.player2 is not None:
-            raise ValueError("Match is full")
-        
-        if self.player1 is None:
-            raise ValueError("Empty match should not exist")
-        
-        self.player2 = player
-        
-    def start_match(self):
-        if self.player2 is None or self.player1 is None:
-            raise ValueError("Match is not full")
-        
-        self.started = True
-    
-    def match_has_started(self):
-        return self.started
-    
-    def get_players(self):
-        return [self.player1, self.player2]
-    
-    def get_goals(self):
-        return self.goals
-    
-    
+from goal_tracker import get_goal_tracker_with_simple_goals
+from match import Match
+
 class PlayerMatcher:
     def __init__(self):
         self.match_list = []
@@ -103,7 +50,7 @@ class PlayerMatcher:
         if not self.can_participate_in_match(player):
             raise ValueError("Player is already in a match")
         
-        match = Match(player, [])
+        match = Match(player, get_goal_tracker_with_simple_goals())
         self.match_list.append(match)
         
     def join_match(self, host, player):
@@ -149,8 +96,8 @@ class PlayerMatcher:
         
         matches[0].start_match()
     
-    def get_goals_for_match_owned_by(self, host):
-        matches = self.get_matches_hosted_by(host)
+    def get_state_for_match(self, host):
+        matches = self.get_matches_hosted_by(host) + self.get_matches_guested_by(host)
         
         if len(matches) > 1:
             raise ValueError("Player should not be hosting more than one match")
@@ -158,7 +105,30 @@ class PlayerMatcher:
         if len(matches) == 0:
             return None 
         
+        return matches[0].get_game_state()
+    
+    def get_coords_for_match(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
         return matches[0].get_goals()
+    
+    def report_position_of(self, player, lon, lat):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player has his position reported in more than one match")
+        
+        if len(matches) == 0:
+            raise ValueError("Player is not in any match")
+        
+        matches[0].report_position(player, lon, lat)
+        
 
 def main():
     matcher = PlayerMatcher()
@@ -211,7 +181,16 @@ def main():
     
     matcher.start_match("dominik")
     
-    print(matcher.get_goals_for_match_owned_by("dominik"))
+    print(matcher.get_coords_for_match("gienek"))
+    print(matcher.get_coords_for_match("dominik"))
+    
+    print(matcher.get_state_for_match("dominik"))
+    
+    matcher.report_position_of("gienek", 50.06193797886043, 19.936964199935105)
+    matcher.report_position_of("dominik", 50.06193797886043, 19.936964199935105)
+    
+    print(matcher.get_state_for_match("dominik"))
+    print(matcher.get_state_for_match("gienek"))
     
 if __name__ == "__main__":
     main()

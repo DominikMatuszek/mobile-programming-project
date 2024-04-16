@@ -19,6 +19,9 @@ class FixedListLocationGenerator:
     def get_all_locations(self):
         return self.locations
     
+def get_simple_location_generator():
+    return FixedListLocationGenerator("locations.csv")    
+
 def main():
     location_generator = FixedListLocationGenerator("locations.csv")
     

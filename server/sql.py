@@ -6,8 +6,10 @@ def add_match_to_database(host, guest, targets, conn):
         cursor.execute("INSERT INTO matches (start_timestamp, end_timestamp) VALUES (%s, NULL);", (timestamp,))
         cursor.execute("SELECT max(id) FROM matches;") # I'm sorry. Haha.
         
-        print("AAAAAAAAAAAAA", cursor.fetchone())
-        match_id = cursor.fetchone()[0]
+        result = cursor.fetchone()
+        
+        print("AAAAAAAAAAAAA", result)
+        match_id = result[0]
         
         for target in targets:
             cursor.execute("INSERT INTO targets (longtitude, latitude, match_id) VALUES (%s, %s, %s);", (target[0], target[1], match_id))

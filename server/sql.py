@@ -1,8 +1,8 @@
-import time 
+import datetime 
 
 def add_match_to_database(host, guest, targets, conn):
     with conn.cursor() as cursor:
-        cursor.execute("INSERT INTO matches (start_timestamp, end_timestamp) VALUES (%s, NULL);", (round(time.time()),))
+        cursor.execute("INSERT INTO matches (start_timestamp, end_timestamp) VALUES (%s, NULL);", (datetime.datetime.now(datetime.UTC).isoformat(),))
         
         match_id = cursor.lastrowid
         

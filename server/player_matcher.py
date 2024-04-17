@@ -175,6 +175,17 @@ class PlayerMatcher:
             raise ValueError("Player is not in any match")
         
         matches[0].set_game_id(id)
+        
+    def get_match_id(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
+        return matches[0].get_match_id()
             
 
 def main():
@@ -220,13 +231,16 @@ def main():
     matcher.create_match("dominik")
     
     try:
-        matcher.start_match("dominik")
+        matcher.start_match("dominik", 8)
     except ValueError as e:
         print(e)
         
     matcher.join_match("dominik", "gienek")
     
-    matcher.start_match("dominik")
+    matcher.start_match("dominik", 5)
+    
+    print(matcher.get_match_id("dominik"))
+    print(matcher.get_match_id("gienek"))
     
     print(matcher.get_coords_for_match("gienek"))
     print(matcher.get_coords_for_match("dominik"))
@@ -238,6 +252,7 @@ def main():
     
     print(matcher.get_state_for_match("dominik"))
     print(matcher.get_state_for_match("gienek"))
+    
     
 if __name__ == "__main__":
     main()

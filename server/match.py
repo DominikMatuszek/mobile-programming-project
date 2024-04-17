@@ -72,4 +72,7 @@ class Match:
             raise ValueError("Match has not been started")
         
         self.goal_tracker.report_position(player, lon, lat)
+        
+    def get_match_id(self):
+        return self.id
 

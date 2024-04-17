@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from auth import check_credentials
 from player_matcher import PlayerMatcher
 
-from sql import add_match_to_database
+from sql import add_match_to_database, add_position_to_database
 
 
 conn = psycopg2.connect(database="dominik",
@@ -137,6 +137,8 @@ async def report_position(data: CoordinatesInfo, response: Response):
     lat = data.lat
 
     lobbies.report_position_of(username, lon, lat)
+    
+    add_position_to_database(username, lon, lat, lobbies.get_match_id(username), conn)
     
 @app.post("/startmatch", status_code=200)
 async def start_match(data: AuthData, response: Response):

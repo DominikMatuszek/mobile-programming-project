@@ -34,3 +34,12 @@ def add_match_to_database(host, guest, targets, conn):
         conn.commit()
         
         return match_id
+    
+def add_position_to_database(player, lon, lat, match_id, conn):
+    player_id = get_user_id(player, conn)
+    
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    
+    with conn.cursor() as cursor:
+        cursor.execute("INSERT INTO recorded_locations (user_id, match_id, timestamp, longtitude, latitude) VALUES (%s, %s, %s, %s);", (player_id, match_id, timestamp, lon, lat))
+        conn.commit()

@@ -187,6 +187,16 @@ class PlayerMatcher:
         
         return matches[0].get_match_id()
 
+    def get_goals(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
+        return matches[0].get_goal_objs()
 
 def main():
     m = PlayerMatcher()
@@ -210,6 +220,9 @@ def main():
     print(previous)
     print(current)
     
+    goals = m.get_goals("gienek")
+    
+    print(goals)
     
     
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ def add_match_to_database(host, guest, targets, conn):
         match_id = result[0]
         
         for target in targets:
-            cursor.execute("INSERT INTO targets (longtitude, latitude, match_id) VALUES (%s, %s, %s);", (target[0], target[1], match_id))
+            cursor.execute("INSERT INTO targets (longtitude, latitude, match_id) VALUES (%s, %s, %s);", (target.lon, target.lat, match_id))
             cursor.execute("SELECT max(id) FROM targets;")
             
             target_id = cursor.fetchone()[0]

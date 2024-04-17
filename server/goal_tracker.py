@@ -17,7 +17,10 @@ class Goal:
                         
         if dist < self.min_dist:
             self.scorer = player
-        
+    
+    def get_coords(self):
+        return [self.lon, self.lat]    
+    
     def was_scored(self):
         return self.scorer is not None
     
@@ -87,6 +90,9 @@ class GoalTracker:
     
     def is_won(self):
         return self.get_winner() is not None
+    
+    def get_goals(self):
+        return self.goals
 
 def get_goal_tracker_with_simple_goals():
     from geo import get_simple_location_generator

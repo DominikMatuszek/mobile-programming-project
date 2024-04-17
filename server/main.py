@@ -131,11 +131,15 @@ async def report_position(data: CoordinatesInfo, response: Response):
     if not check_credentials(data.username, data.password, conn):
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return 
-
+    
     username = data.username
     lon = data.lon
     lat = data.lat
 
+    if not lobbies.is_match_started(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+    
     state_before_report = lobbies.get_state_for_match(username)
 
     lobbies.report_position_of(username, lon, lat)
@@ -164,7 +168,7 @@ async def start_match(data: AuthData, response: Response):
         response.status_code = status.HTTP_409_CONFLICT
         return
     else:       
-        targets = lobbies.get_coords_for_match(username)
+        targets = lobbies.get_goals(username)
         players = lobbies.get_player_list(username)
         
         host = players[0]

@@ -67,6 +67,9 @@ class Match:
     def get_goals(self):
         return self.goal_tracker.get_target_coords()
     
+    def get_goal_objs(self):
+        return self.goal_tracker.get_goals()
+    
     def report_position(self, player, lon, lat):
         if not self.match_has_started():
             raise ValueError("Match has not been started")

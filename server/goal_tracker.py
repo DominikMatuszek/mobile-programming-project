@@ -7,6 +7,7 @@ class Goal:
         self.min_dist = dist_meters
         
         self.scorer = None 
+        self.id = None 
         
     def report_position(self, player, lon, lat):
         if self.was_scored():
@@ -23,8 +24,14 @@ class Goal:
     def get_scorer(self):
         return self.scorer
     
+    def get_id(self):
+        return self.id 
+    
+    def set_id(self, id):
+        self.id = id
+    
 class GoalTracker:
-    def __init__(self, target_coords):
+    def __init__(self, target_coords, win_threshold=5):
         self.target_coords = target_coords
         
         goals = []
@@ -38,6 +45,7 @@ class GoalTracker:
             goals.append(goal)
             
         self.goals = goals
+        self.win_threshold = win_threshold
         
     def report_position(self, player, lon, lat):
         for goal in self.goals:
@@ -60,9 +68,25 @@ class GoalTracker:
         return self.target_coords
     
     def get_target_coords_with_scorers(self):
-        scorers = [goal.get_scorer() for goal in self.goals if goal.was_scored()]
+        goals = self.goals 
         
-        return list(zip(self.target_coords, scorers))
+        def target_iteration():
+            for goal in goals:
+                yield {"id": goal.get_id(), "lon": goal.lon, "lat": goal.lat, "scorer": goal.get_scorer()}
+    
+        return list(target_iteration())
+    
+    def get_winner(self):
+        scores = self.get_scores()
+        
+        for player, score in scores.items():
+            if score >= self.win_threshold:
+                return player
+        
+        return None
+    
+    def is_won(self):
+        return self.get_winner() is not None
 
 def get_goal_tracker_with_simple_goals():
     from geo import get_simple_location_generator

@@ -186,3 +186,31 @@ class PlayerMatcher:
             return None
         
         return matches[0].get_match_id()
+
+
+def main():
+    m = PlayerMatcher()
+    
+    m.create_match("gienek")
+    m.join_match("gienek", "dominik")
+    
+    m.start_match("gienek", 1)
+    
+    print(m.get_state_for_match("gienek"))
+    
+    m.report_position_of("gienek", 50.06193797886043, 19.936964199935105)
+    
+    previous = m.get_state_for_match("gienek")
+    
+    
+    m.report_position_of("gienek", 50.061013211887946, 19.932678728027547)
+
+    current = m.get_state_for_match("gienek")
+    
+    print(previous)
+    print(current)
+    
+    
+    
+if __name__ == '__main__':
+    main()

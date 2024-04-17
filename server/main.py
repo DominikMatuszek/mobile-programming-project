@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from auth import check_credentials
 from player_matcher import PlayerMatcher
 
-from sql import add_match_to_database, add_position_to_database
+from sql import add_match_to_database, add_position_to_database, add_score_to_database
 
 
 conn = psycopg2.connect(database="dominik",
@@ -136,7 +136,19 @@ async def report_position(data: CoordinatesInfo, response: Response):
     lon = data.lon
     lat = data.lat
 
+    state_before_report = lobbies.get_state_for_match(username)
+
     lobbies.report_position_of(username, lon, lat)
+    
+    state_after_report = lobbies.get_state_for_match(username)
+    
+    if state_before_report != state_after_report:
+        # New goal was scored, oh well 
+        match_id = lobbies.get_match_id(username)
+        
+        for before_dict, after_dict in zip(state_before_report, state_after_report):
+            if before_dict["scorer"] is None and after_dict["scorer"] is not None:
+                add_score_to_database(match_id, after_dict["scorer"], after_dict["id"], conn)
     
     add_position_to_database(username, lon, lat, lobbies.get_match_id(username), conn)
     

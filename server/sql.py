@@ -49,5 +49,8 @@ def add_position_to_database(player, lon, lat, match_id, conn):
         conn.commit()
         
 def add_score_to_database(match_id, player, target_id, conn):
-    pass 
+    player_id = get_user_id(player, conn)
     
+    with conn.cursor() as cursor:
+        cursor.execute("INSERT INTO claims (player_id, target_id) VALEUS (%s, %s);", (player_id, target_id))
+        conn.commit()

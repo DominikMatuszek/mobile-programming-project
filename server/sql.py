@@ -52,5 +52,5 @@ def add_score_to_database(match_id, player, target_id, conn):
     player_id = get_user_id(player, conn)
     
     with conn.cursor() as cursor:
-        cursor.execute("INSERT INTO claims (player_id, target_id) VALEUS (%s, %s);", (player_id, target_id))
+        cursor.execute("INSERT INTO claims (player_id, target_id) VALUES (%s, %s);", (player_id, target_id))
         conn.commit()

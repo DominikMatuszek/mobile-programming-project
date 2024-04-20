@@ -13,6 +13,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.app.databinding.FragmentLoginBinding;
 import com.example.app.server_wrapper.Client;
 
+import org.json.JSONArray;
+
 public class LoginFragment extends Fragment {
 
     private FragmentLoginBinding binding;
@@ -20,6 +22,33 @@ public class LoginFragment extends Fragment {
     private boolean loggedIn(String username, String password) {
         Client client = new Client(username, password);
         return client.login() == 200;
+    }
+
+    private boolean inLobbyOrGame(String username, String password) {
+        Client client = new Client(username, password);
+
+        String response = client.getLobbies();
+
+        try {
+            JSONArray arr = new JSONArray(response);
+
+            for (int i = 0; i < arr.length(); i++) {
+                JSONArray lobby = arr.getJSONArray(i);
+
+                String firstUser = lobby.getString(0);
+                String secondUser = lobby.getString(1);
+
+                if (firstUser.equals(username) || secondUser.equals(username)) {
+                    return true;
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     @Override
@@ -59,9 +88,14 @@ public class LoginFragment extends Fragment {
 
             new Thread(() -> {
                 if (loggedIn(username, password)) {
-                    activity.runOnUiThread(
-                            () -> NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_LoginFragment_to_homeFragment)
-                    );
+                    if (inLobbyOrGame(username, password)) {
+                        activity.runOnUiThread(
+                                () -> NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_LoginFragment_to_singularLobbyFragment));
+                    } else {
+                        activity.runOnUiThread(
+                                () -> NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_LoginFragment_to_homeFragment)
+                        );
+                    }
 
                     activity.saveString("username", username);
                     activity.saveString("password", password);

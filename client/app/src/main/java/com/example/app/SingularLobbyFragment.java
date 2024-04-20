@@ -9,13 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.app.databinding.FragmentSingulerLobbyBinding;
+import com.example.app.server_wrapper.Client;
 
 import org.json.JSONArray;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
 
 public class SingularLobbyFragment extends Fragment {
     private boolean update = true;
@@ -33,46 +29,15 @@ public class SingularLobbyFragment extends Fragment {
 
     }
 
-    private void leaveLobby() {
-        new Thread(() -> {
-            try {
-                MainActivity activity = (MainActivity) getActivity();
-                String username = activity.getString("username");
-                String password = activity.getString("password");
-
-                String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
-
-                URL url = new URL("http://52.169.201.105:8000/leavelobby");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setDoOutput(true);
-                connection.getOutputStream().write(jsonInputString.getBytes());
-
-                int code = connection.getResponseCode();
-
-                if (code != 200) {
-                    System.out.println("Failed to leave lobby, we're gonna have a bad time. Response code: " + code);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private OpponentInfo getOpponent(String username) {
+    private OpponentInfo getOpponent() {
         try {
-            URL url = new URL("http://52.169.201.105:8000/getlobbies");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            MainActivity activity = (MainActivity) getActivity();
+            String password = activity.getString("password");
+            String username = activity.getString("username");
 
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type", "application/json");
+            Client client = new Client(username, password);
+            String stringList = client.getLobbies();
 
-            InputStream response = connection.getInputStream();
-            Scanner scanner = new Scanner(response);
-
-            String stringList = scanner.nextLine();
             JSONArray arr = new JSONArray(stringList);
 
 
@@ -90,6 +55,7 @@ public class SingularLobbyFragment extends Fragment {
             }
 
         } catch (Exception e) {
+            System.out.println("WORST ERROR EVER");
             e.printStackTrace();
         }
 
@@ -103,9 +69,7 @@ public class SingularLobbyFragment extends Fragment {
 
         new Thread(() -> {
             while (update) {
-
-                String username = activity.getString("username");
-                OpponentInfo opponent = getOpponent(username);
+                OpponentInfo opponent = getOpponent();
 
                 String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
 
@@ -142,7 +106,13 @@ public class SingularLobbyFragment extends Fragment {
     @Override
     public void onDestroyView() {
         update = false;
-        leaveLobby();
+
+        String username = ((MainActivity) getActivity()).getString("username");
+        String password = ((MainActivity) getActivity()).getString("password");
+
+        Client client = new Client(username, password);
+        client.leaveLobby();
+
         super.onDestroyView();
         binding = null;
     }

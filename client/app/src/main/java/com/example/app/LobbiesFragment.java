@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentLobbiesBinding;
+import com.example.app.server_wrapper.Client;
 
 import org.json.JSONArray;
 
@@ -69,62 +70,15 @@ public class LobbiesFragment extends Fragment {
         }
     }
 
-    private int joinLobby(String lobby_owner, MainActivity activity) {
-        try {
-            URL url = new URL("http://52.169.201.105:8000/joinlobby");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            String username = activity.getString("username");
-            String password = activity.getString("password");
-
-            String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\", \"lobby_owner_username\": \"" + lobby_owner + "\"}";
-
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(jsonInputString.getBytes());
-
-            return connection.getResponseCode();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 400;
-        }
-    }
-
-    private int createLobby(MainActivity activity) {
-        try {
-            URL url = new URL("http://52.169.201.105:8000/createlobby");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            String username = activity.getString("username");
-            String password = activity.getString("password");
-
-            String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
-
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(jsonInputString.getBytes());
-
-            return connection.getResponseCode();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 400;
-        }
-    }
-
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
+        Client client = new Client(activity.getString("username"), activity.getString("password"));
 
         binding.createlobby.setOnClickListener((v) -> {
             new Thread(() -> {
-                int status = createLobby(activity);
+                int status = client.createLobby();
 
                 if (status == 200) {
                     activity.runOnUiThread(() -> {
@@ -145,7 +99,7 @@ public class LobbiesFragment extends Fragment {
 
                 button.setOnClickListener((v) -> {
                     new Thread(() -> {
-                        int status = joinLobby(lobby, activity);
+                        int status = client.joinLobby(lobby);
 
                         if (status == 200) {
                             activity.runOnUiThread(() -> {
@@ -156,9 +110,7 @@ public class LobbiesFragment extends Fragment {
                     }).start();
                 });
 
-                activity.runOnUiThread(() -> {
-                    binding.lobbiesLayout.addView(button);
-                });
+                activity.runOnUiThread(() -> binding.lobbiesLayout.addView(button));
             }
         }).start();
 

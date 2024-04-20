@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentSingulerLobbyBinding;
 import com.example.app.server_wrapper.Client;
@@ -37,7 +38,7 @@ public class SingularLobbyFragment extends Fragment {
 
             Client client = new Client(username, password);
             String stringList = client.getLobbies();
-            
+
             JSONArray arr = new JSONArray(stringList);
 
 
@@ -104,7 +105,16 @@ public class SingularLobbyFragment extends Fragment {
 
         binding.startGame.setOnClickListener((v) -> {
             Client client = new Client(activity.getString("username"), activity.getString("password"));
-            new Thread(client::startMatch).start();
+
+            new Thread(() -> {
+                if (client.startMatch() == 200) {
+                    update = false;
+                    activity.runOnUiThread(() -> {
+                        NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
+                    });
+                }
+            }).start();
+
         });
     }
 

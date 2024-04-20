@@ -77,9 +77,11 @@ public class SingularLobbyFragment extends Fragment {
                     binding.opponent.setText(opponentText);
 
                     if (opponent.host) {
+                        binding.waiting.setVisibility(View.VISIBLE);
                         binding.startGame.setVisibility(View.INVISIBLE);
                     } else {
                         binding.waiting.setVisibility(View.INVISIBLE);
+                        binding.startGame.setVisibility(View.VISIBLE);
                     }
 
                     if (opponent.username == null) {

@@ -11,36 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentLoginBinding;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.example.app.server_wrapper.Client;
 
 public class LoginFragment extends Fragment {
 
     private FragmentLoginBinding binding;
 
     private boolean loggedIn(String username, String password) {
-
-        try {
-            URL url = new URL("http://52.169.201.105:8000/login");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
-
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(jsonInputString.getBytes());
-
-            int responseCode = connection.getResponseCode();
-            return responseCode == 200;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
+        Client client = new Client(username, password);
+        return client.login() == 200;
     }
 
     @Override

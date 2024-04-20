@@ -138,4 +138,32 @@ public class Client {
         }
 
     }
+
+    public int startMatch() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/startmatch", body);
+            return connection.getResponseCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 400;
+        }
+    }
+
+    public int login() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/login", body);
+            return connection.getResponseCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 400;
+        }
+    }
 }

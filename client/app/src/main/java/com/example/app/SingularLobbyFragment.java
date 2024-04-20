@@ -100,6 +100,10 @@ public class SingularLobbyFragment extends Fragment {
         }).start();
 
 
+        binding.startGame.setOnClickListener((v) -> {
+            Client client = new Client(activity.getString("username"), activity.getString("password"));
+            new Thread(client::startMatch).start();
+        });
     }
 
     @Override

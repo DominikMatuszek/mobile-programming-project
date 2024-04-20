@@ -93,10 +93,48 @@ public class LobbiesFragment extends Fragment {
         }
     }
 
+    private int createLobby(MainActivity activity) {
+        try {
+            URL url = new URL("http://52.169.201.105:8000/createlobby");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            String username = activity.getString("username");
+            String password = activity.getString("password");
+
+            String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
+
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(jsonInputString.getBytes());
+
+            return connection.getResponseCode();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 400;
+        }
+    }
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
+
+        binding.createlobby.setOnClickListener((v) -> {
+            new Thread(() -> {
+                int status = createLobby(activity);
+
+                if (status == 200) {
+                    activity.runOnUiThread(() -> {
+                        NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
+                    });
+                } else {
+                    System.out.println("Failed to create lobby, this should not happen; status: " + status);
+                }
+            }).start();
+        });
 
         new Thread(() -> {
             List<String> lobbies = getLobbies();
@@ -108,7 +146,7 @@ public class LobbiesFragment extends Fragment {
                 button.setOnClickListener((v) -> {
                     new Thread(() -> {
                         int status = joinLobby(lobby, activity);
-                        
+
                         if (status == 200) {
                             activity.runOnUiThread(() -> {
                                 NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);

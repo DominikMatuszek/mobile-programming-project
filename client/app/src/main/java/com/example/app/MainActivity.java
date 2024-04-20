@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.app.databinding.ActivityMainBinding;
+import com.example.app.server_wrapper.Client;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+    private Client client = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,5 +97,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             return null;
         }
+    }
+
+    public Client getClient() {
+        return this.client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

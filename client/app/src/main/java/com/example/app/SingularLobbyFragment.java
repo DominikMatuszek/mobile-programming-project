@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class SingularLobbyFragment extends Fragment {
+    private boolean update = true;
 
     private FragmentSingulerLobbyBinding binding;
 
@@ -101,26 +102,38 @@ public class SingularLobbyFragment extends Fragment {
         MainActivity activity = (MainActivity) getActivity();
 
         new Thread(() -> {
-            String username = activity.getString("username");
-            OpponentInfo opponent = getOpponent(username);
+            while (update) {
 
-            String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
+                String username = activity.getString("username");
+                OpponentInfo opponent = getOpponent(username);
 
-            activity.runOnUiThread(() -> {
+                String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
 
-                binding.opponent.setText(opponentText);
+                activity.runOnUiThread(() -> {
 
-                if (opponent.host) {
-                    binding.startGame.setVisibility(View.INVISIBLE);
-                } else {
-                    binding.waiting.setVisibility(View.INVISIBLE);
+                    binding.opponent.setText(opponentText);
+
+                    if (opponent.host) {
+                        binding.startGame.setVisibility(View.INVISIBLE);
+                    } else {
+                        binding.waiting.setVisibility(View.INVISIBLE);
+                    }
+
+                    if (opponent.username == null) {
+                        binding.startGame.setClickable(false);
+                        binding.startGame.setEnabled(false);
+                    } else {
+                        binding.startGame.setClickable(true);
+                        binding.startGame.setEnabled(true);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
-                if (opponent.username == null) {
-                    binding.startGame.setClickable(false);
-                }
-            });
-
+            }
         }).start();
 
 
@@ -128,6 +141,7 @@ public class SingularLobbyFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        update = false;
         leaveLobby();
         super.onDestroyView();
         binding = null;

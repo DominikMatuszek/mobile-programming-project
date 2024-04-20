@@ -11,9 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentSignupBinding;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.example.app.server_wrapper.Client;
 
 public class SignupFragment extends Fragment {
 
@@ -28,28 +26,6 @@ public class SignupFragment extends Fragment {
         binding = FragmentSignupBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
-    }
-
-    private int register(String username, String password, MainActivity activity) {
-        try {
-            URL url = new URL("http://52.169.201.105:8000/register");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            String jsonInputString = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
-
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(jsonInputString.getBytes());
-
-            return connection.getResponseCode();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 400;
-        }
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -73,7 +49,7 @@ public class SignupFragment extends Fragment {
 
                     new Thread(
                             () -> {
-                                int response_code = register(username, password, activity);
+                                int response_code = new Client(username, password, "http://52.169.201.105:8000").register();
 
                                 String title = "Registration successful";
                                 String message = "You can now start using the app!";
@@ -103,6 +79,7 @@ public class SignupFragment extends Fragment {
                                             if (response_code == 201) {
                                                 activity.saveString("username", username);
                                                 activity.saveString("password", password);
+                                                activity.setClient(new Client(username, password, "http://52.169.201.105:8000"));
                                                 NavHostFragment.findNavController(SignupFragment.this).navigate(R.id.action_signupFragment_to_LoginFragment);
                                             }
                                         }

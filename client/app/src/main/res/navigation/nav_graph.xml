@@ -50,5 +50,15 @@
     <fragment
         android:id="@+id/singularLobbyFragment"
         android:name="com.example.app.SingularLobbyFragment"
-        android:label="SingularLobbyFragment" />
+        android:label="SingularLobbyFragment">
+        <action
+            android:id="@+id/action_singularLobbyFragment_to_gameMapFragment"
+            app:destination="@id/gameMapFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gameMapFragment"
+        android:name="com.example.app.GameMapFragment"
+        android:label="GameMapFragment"
+        tools:layout="@layout/fragment_game_map" />
 </navigation>

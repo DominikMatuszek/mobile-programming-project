@@ -37,7 +37,7 @@ public class SingularLobbyFragment extends Fragment {
 
             Client client = new Client(username, password);
             String stringList = client.getLobbies();
-
+            
             JSONArray arr = new JSONArray(stringList);
 
 

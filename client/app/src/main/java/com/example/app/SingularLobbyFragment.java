@@ -55,7 +55,6 @@ public class SingularLobbyFragment extends Fragment {
             }
 
         } catch (Exception e) {
-            System.out.println("WORST ERROR EVER");
             e.printStackTrace();
         }
 

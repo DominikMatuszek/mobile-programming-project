@@ -15,12 +15,8 @@ import com.example.app.server_wrapper.Client;
 
 import org.json.JSONArray;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class LobbiesFragment extends Fragment {
 
@@ -39,16 +35,13 @@ public class LobbiesFragment extends Fragment {
 
     private List<String> getLobbies() {
         try {
-            URL url = new URL("http://52.169.201.105:8000/getlobbies");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            MainActivity activity = (MainActivity) getActivity();
+            String password = activity.getString("password");
+            String username = activity.getString("username");
 
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type", "application/json");
+            Client client = new Client(username, password);
+            String stringList = client.getLobbies();
 
-            InputStream response = connection.getInputStream();
-            Scanner scanner = new Scanner(response);
-
-            String stringList = scanner.nextLine();
             JSONArray arr = new JSONArray(stringList);
 
             List<String> lobbies = new ArrayList<>();
@@ -91,6 +84,14 @@ public class LobbiesFragment extends Fragment {
         });
 
         new Thread(() -> {
+            // I know this looks funny, but that is to make things prettier by not asking server about state of lobbies immediately after leaving
+            // If we are leaving
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
             List<String> lobbies = getLobbies();
 
             for (String lobby : lobbies) {

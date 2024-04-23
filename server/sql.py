@@ -54,3 +54,11 @@ def add_score_to_database(match_id, player, target_id, conn):
     with conn.cursor() as cursor:
         cursor.execute("INSERT INTO claims (player_id, target_id) VALUES (%s, %s);", (player_id, target_id))
         conn.commit()
+        
+def add_winner_to_database(match_id, winner, conn):
+    winner_id = get_user_id(winner, conn)
+    
+    with conn.cursor() as cursor:
+        cursor.execute("UPDATE results SET won = TRUE WHERE player_id = %s AND match_id = %s;", (winner_id, match_id))
+        cursor.execute("UPDATE results SET won = FALSE WHERE player_id != %s AND match_id = %s;", (winner_id, match_id))
+        conn.commit()

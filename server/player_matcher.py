@@ -64,7 +64,7 @@ class PlayerMatcher:
         match.add_player(player)
     
     def can_leave_match(self, player):
-        return self.is_player_in_match(player)
+        return self.is_player_in_match(player) and not self.is_match_started(player)
     
     def leave_match(self, player):
         matches = [match for match in self.match_list if match.is_player_in_match(player)]
@@ -197,6 +197,17 @@ class PlayerMatcher:
             return None
         
         return matches[0].get_goal_objs()
+    
+    def get_winner(self, player):
+        matches = self.get_matches_hosted_by(player) + self.get_matches_guested_by(player)
+        
+        if len(matches) > 1:
+            raise ValueError("Player is in more than one match")
+        
+        if len(matches) == 0:
+            return None
+        
+        return matches[0].get_winner()
 
 def main():
     m = PlayerMatcher()

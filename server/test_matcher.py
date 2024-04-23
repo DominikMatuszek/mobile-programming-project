@@ -59,6 +59,27 @@ class TestBasicMatching(unittest.TestCase):
         
         self.assertFalse(matcher.can_game_be_started("mietek"))
         self.assertRaises(ValueError, matcher.start_match, "mietek", 1)
+        
+    def test_game_can_be_won(self):
+        matcher = PlayerMatcher()
+        
+        matcher.create_match("mietek")
+        matcher.join_match("mietek", "maciej")
+        
+        matcher.start_match("mietek", 1)
+        
+        self.assertTrue(matcher.get_winner("mietek") == None)
+        
+        import csv 
+        
+        locations = csv.reader(open("locations.csv"))
+        
+        for location in locations:
+            matcher.report_position_of("mietek", location[0], location[1])
+            matcher.report_position_of("maciej", location[0], location[1])
+        
+        self.assertTrue(matcher.get_winner("mietek") == "mietek")
+        self.assertTrue(matcher.get_winner("maciej") == "mietek")
     
 if __name__ == '__main__':
     unittest.main()

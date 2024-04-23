@@ -6,6 +6,9 @@ class Match:
         self.goal_tracker = goal_tracker
         self.id = None
     
+    def get_winner(self):       
+        return self.goal_tracker.get_winner()
+    
     def match_is_full(self):
         return self.player2 is not None
     

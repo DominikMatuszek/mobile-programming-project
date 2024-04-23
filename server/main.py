@@ -216,3 +216,17 @@ async def get_winner(user_info: AuthData, response: Response):
         return
 
     return lobbies.get_winner(username)
+
+@app.post("/amiinactivegame", status_code=200)
+async def am_i_inactive_game(user_info: AuthData, response: Response):
+    if not check_credentials(user_info.username, user_info.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = user_info.username
+
+    if not lobbies.is_match_started(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+
+    return lobbies.is_match_started(username)

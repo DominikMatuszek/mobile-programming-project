@@ -202,3 +202,17 @@ async def get_match_state(user_info: AuthData, response: Response):
         return
 
     return lobbies.get_state_for_match(username)
+
+@app.post("/getwinner", status_code=200)
+async def get_winner(user_info: AuthData, response: Response):
+    if not check_credentials(user_info.username, user_info.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = user_info.username
+
+    if not lobbies.get_winner(username):
+        response.status_code = status.HTTP_409_CONFLICT
+        return
+
+    return lobbies.get_winner(username)

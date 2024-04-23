@@ -74,23 +74,26 @@ public class SingularLobbyFragment extends Fragment {
                 String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
 
                 activity.runOnUiThread(() -> {
+                    try {
+                        binding.opponent.setText(opponentText);
 
-                    binding.opponent.setText(opponentText);
+                        if (opponent.host) {
+                            binding.waiting.setVisibility(View.VISIBLE);
+                            binding.startGame.setVisibility(View.INVISIBLE);
+                        } else {
+                            binding.waiting.setVisibility(View.INVISIBLE);
+                            binding.startGame.setVisibility(View.VISIBLE);
+                        }
 
-                    if (opponent.host) {
-                        binding.waiting.setVisibility(View.VISIBLE);
-                        binding.startGame.setVisibility(View.INVISIBLE);
-                    } else {
-                        binding.waiting.setVisibility(View.INVISIBLE);
-                        binding.startGame.setVisibility(View.VISIBLE);
-                    }
-
-                    if (opponent.username == null) {
-                        binding.startGame.setClickable(false);
-                        binding.startGame.setEnabled(false);
-                    } else {
-                        binding.startGame.setClickable(true);
-                        binding.startGame.setEnabled(true);
+                        if (opponent.username == null) {
+                            binding.startGame.setClickable(false);
+                            binding.startGame.setEnabled(false);
+                        } else {
+                            binding.startGame.setClickable(true);
+                            binding.startGame.setEnabled(true);
+                        }
+                    } catch (NullPointerException npe) {
+                        // It happens
                     }
                 });
 

@@ -69,6 +69,26 @@ public class SingularLobbyFragment extends Fragment {
 
         new Thread(() -> {
             while (update) {
+                Client client = new Client(
+                        activity.getString("username"),
+                        activity.getString("password")
+                );
+
+                new Thread(() -> {
+                    if (client.amIInActiveMatch()) {
+                        update = false;
+                        activity.runOnUiThread(() -> {
+                            System.out.println("Navigating to game map");
+                            NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
+                        });
+
+                    } else {
+                        System.out.println("Not in active match");
+                    }
+                }
+                ).start();
+
+
                 OpponentInfo opponent = getOpponent();
 
                 String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;

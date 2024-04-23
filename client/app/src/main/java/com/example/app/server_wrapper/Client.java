@@ -2,11 +2,17 @@ package com.example.app.server_wrapper;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -180,6 +186,62 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
             return 400;
+        }
+    }
+
+    public List<TargetState> getMatchState() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/getmatchstate", body);
+
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+
+            String responseString = scanner.nextLine();
+
+            List<TargetState> targetStates = new ArrayList<>();
+
+            JSONArray objectMaps = new JSONArray(responseString);
+
+            for (int i = 0; i < objectMaps.length(); i++) {
+                JSONObject map = objectMaps.getJSONObject(i);
+
+                System.out.println(map);
+
+                double lon = map.getDouble("lon");
+                double lat = map.getDouble("lat");
+                String scorer = map.getString("scorer");
+
+                TargetState targetState = new TargetState(lon, lat, scorer);
+
+                targetStates.add(targetState);
+            }
+
+            return targetStates;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public boolean amIInActiveMatch() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/getmatchstate", body);
+            return connection.getResponseCode() == 200;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

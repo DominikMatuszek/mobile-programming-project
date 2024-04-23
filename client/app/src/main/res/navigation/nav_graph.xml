@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_LoginFragment_to_singularLobbyFragment"
             app:destination="@id/singularLobbyFragment" />
+        <action
+            android:id="@+id/action_LoginFragment_to_gameMapFragment"
+            app:destination="@id/gameMapFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"

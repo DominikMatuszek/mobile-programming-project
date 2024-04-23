@@ -1,5 +1,6 @@
 package com.example.app;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.app.databinding.FragmentGameMapBinding;
+import com.example.app.server_wrapper.Client;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -44,6 +46,32 @@ public class GameMapFragment extends Fragment {
 
         IMapController controller = mapView.getController();
         controller.setZoom(19.0);
+
+        new Thread(
+                () -> {
+                    Client client = new Client(
+                            mainActivity.getString("username"),
+                            mainActivity.getString("password")
+                    );
+
+                    while (true) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Location lastKnownLocation = mainActivity.lastKnownLocation;
+
+                        if (lastKnownLocation != null) {
+                            client.reportPosition(
+                                    lastKnownLocation.getLongitude(),
+                                    lastKnownLocation.getLatitude()
+                            );
+                        }
+                    }
+                }
+        ).start();
     }
 
     @Override

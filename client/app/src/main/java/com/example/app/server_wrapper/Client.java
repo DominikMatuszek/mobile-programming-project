@@ -166,4 +166,20 @@ public class Client {
             return 400;
         }
     }
+
+    public int reportPosition(double lon, double lat) {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        body.put("lon", Double.toString(lon));
+        body.put("lat", Double.toString(lat));
+
+        try {
+            return postToServer("/reportposition", body).getResponseCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 400;
+        }
+    }
 }

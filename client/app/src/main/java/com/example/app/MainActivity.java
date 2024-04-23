@@ -110,11 +110,7 @@ public class MainActivity extends AppCompatActivity {
         ).start();
 
     }
-
-    private void lolxd() {
-        System.out.println("REE");
-    }
-
+    
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

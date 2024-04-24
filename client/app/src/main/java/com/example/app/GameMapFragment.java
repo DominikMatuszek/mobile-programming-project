@@ -17,8 +17,10 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,55 +49,53 @@ public class GameMapFragment extends Fragment {
 
     }
 
-    private void addGoalsToMap() {
-        new Thread(
-                () -> {
-                    Client client = new Client(
-                            mainActivity.getString("username"),
-                            mainActivity.getString("password")
-                    );
+    private List<Overlay> getGoalsOverlays() {
+        List<Overlay> goalOverlays = new ArrayList<>();
 
-                    System.out.println("Setting goals");
+        Client client = new Client(
+                mainActivity.getString("username"),
+                mainActivity.getString("password")
+        );
 
-                    List<TargetState> goals = client.getMatchState();
+        System.out.println("Setting goals");
 
-                    for (TargetState goal : goals) {
-                        System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
+        List<TargetState> goals = client.getMatchState();
 
-                        Location loc = new Location("");
-                        loc.setLatitude(goal.getLat());
-                        loc.setLongitude(goal.getLon());
+        for (TargetState goal : goals) {
+            System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
 
-                        //CustomMarkerOverlay overlay = OverlayFactory.createGoalOverlay(
-                        //        getResources(),
-                        //        loc,
-                        //        mapView
-                        //);
+            Location loc = new Location("");
+            loc.setLatitude(goal.getLat());
+            loc.setLongitude(goal.getLon());
 
-                        MyLocationNewOverlay overlay = OverlayFactory.createLocationOverlay(
-                                () -> loc,
-                                mapView
-                        );
+            OverlayFactory.GoalType type = null;
 
-                        mainActivity.runOnUiThread(
-                                () -> mapView.getOverlays().add(overlay)
-                        );
-                    }
+            // sorry
+            if (goal.getScorer().equals(mainActivity.getString("username"))) {
+                type = OverlayFactory.GoalType.FRIENDLY;
+            } else if (goal.getScorer() == null) {
+                type = OverlayFactory.GoalType.NEUTRAL;
+            } else {
+                type = OverlayFactory.GoalType.ENEMY;
+            }
 
+            CustomMarkerOverlay overlay = OverlayFactory.createGoalOverlay(
+                    getResources(),
+                    type,
+                    loc,
+                    mapView
+            );
 
-                }
-        ).start();
+            goalOverlays.add(overlay);
+        }
+
+        return goalOverlays;
     }
 
-    private void addCurrentLocationToMap() {
-        MyLocationNewOverlay locationOverlay = OverlayFactory.createLocationOverlay(
+    private MyLocationNewOverlay getCurrentLocationOverlay() {
+        return OverlayFactory.createLocationOverlay(
                 () -> mainActivity.lastKnownLocation,
                 mapView);
-
-        mainActivity.runOnUiThread(
-                () -> mapView.getOverlays().add(locationOverlay)
-
-        );
     }
 
     private void startRefreshingMarkers() {
@@ -104,15 +104,19 @@ public class GameMapFragment extends Fragment {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+
+                List<Overlay> newOverlays = getGoalsOverlays();
+                newOverlays.add(getCurrentLocationOverlay());
+
                 mainActivity.runOnUiThread(
                         () -> {
                             mapView.getOverlays().clear();
                             mapView.invalidate();
+                            mapView.getOverlays().addAll(newOverlays);
                         }
 
                 );
-                addGoalsToMap();
-                addCurrentLocationToMap();
+
             }
         };
 
@@ -152,7 +156,7 @@ public class GameMapFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
 
         IMapController controller = mapView.getController();
-        controller.setZoom(14.0);
+        controller.setZoom(4.0);
 
         new Thread(
                 () -> {

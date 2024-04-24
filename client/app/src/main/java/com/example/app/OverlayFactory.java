@@ -22,12 +22,33 @@ public class OverlayFactory {
         return overlay;
     }
 
-    public static CustomMarkerOverlay createGoalOverlay(Resources res, Location location, MapView mapView) {
+    public static CustomMarkerOverlay createGoalOverlay(Resources res, GoalType type, Location location, MapView mapView) {
         Supplier<Location> supp = () -> location;
-        Drawable drawable = ResourcesCompat.getDrawable(res, R.mipmap.ic_launcher, null);
+
+        Drawable drawable = null;
+
+        switch (type) {
+            case ENEMY:
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.enemy_marker, null);
+                break;
+            case FRIENDLY:
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.friendly_marker, null);
+                break;
+            case NEUTRAL:
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.neutral_marker, null);
+                break;
+        }
+
+        // Drawable drawable = ResourcesCompat.getDrawable(res, R.drawable.ic_launcher_foreground, null);
         CustomMarkerOverlay overlay = new CustomMarkerOverlay(drawable, new PrimitiveLocationProvider(supp), mapView);
         overlay.enableMyLocation();
 
         return overlay;
+    }
+
+    public enum GoalType {
+        ENEMY,
+        FRIENDLY,
+        NEUTRAL
     }
 }

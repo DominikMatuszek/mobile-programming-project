@@ -17,7 +17,11 @@ public class CustomMarkerOverlay extends MyLocationNewOverlay {
 
     public CustomMarkerOverlay(Drawable drawable, IMyLocationProvider provider, MapView mapView) {
         super(provider, mapView);
-        mPersonBitmap = DrawableConverter.getBitmapFromDrawable(drawable);
+        Bitmap bmp = DrawableConverter.getBitmapFromDrawable(drawable);
+        //bmp.setHeight(100);
+        //bmp.setWidth(100);
+
+        mPersonBitmap = bmp;
     }
 
 }

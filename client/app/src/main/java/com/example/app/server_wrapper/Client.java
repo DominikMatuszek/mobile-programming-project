@@ -222,10 +222,7 @@ public class Client {
 
             return targetStates;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }

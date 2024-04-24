@@ -15,15 +15,20 @@ import com.example.app.server_wrapper.TargetState;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameMapFragment extends Fragment {
 
     private FragmentGameMapBinding binding;
     private MapView mapView;
     private MainActivity mainActivity;
+    private Timer locationUpdateTimer;
 
     @Override
     public View onCreateView(
@@ -42,7 +47,7 @@ public class GameMapFragment extends Fragment {
 
     }
 
-    private void setGoals() {
+    private void addGoalsToMap() {
         new Thread(
                 () -> {
                     Client client = new Client(
@@ -57,8 +62,68 @@ public class GameMapFragment extends Fragment {
                     for (TargetState goal : goals) {
                         System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
                     }
+
                 }
         ).start();
+    }
+
+    private void addCurrentLocationToMap() {
+        MyLocationNewOverlay locationOverlay = OverlayFactory.createLocationOverlay(
+                () -> mainActivity.lastKnownLocation,
+                mapView);
+        
+        mainActivity.runOnUiThread(
+                () -> mapView.getOverlays().add(locationOverlay)
+
+        );
+    }
+
+    private void startRefreshingMarkers() {
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                mainActivity.runOnUiThread(
+                        () -> {
+                            mapView.getOverlays().clear();
+                            mapView.invalidate();
+                        }
+
+                );
+                //addGoalsToMap();
+                addCurrentLocationToMap();
+            }
+        };
+
+        timer.schedule(task, 0, 3000);
+    }
+
+    private void centerMapOnCurrentLocationOncePossible() {
+        locationUpdateTimer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                Location lastKnownLocation = mainActivity.lastKnownLocation;
+
+                if (lastKnownLocation != null) {
+                    IMapController controller = mapView.getController();
+                    GeoPoint center = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+                    mainActivity.runOnUiThread(
+                            () -> {
+                                controller.setCenter(center);
+                            }
+                    );
+                    locationUpdateTimer.cancel();
+                }
+
+            }
+        };
+
+        locationUpdateTimer.schedule(task, 0, 1000);
+
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -95,7 +160,8 @@ public class GameMapFragment extends Fragment {
                 }
         ).start();
 
-        setGoals();
+        centerMapOnCurrentLocationOncePossible();
+        startRefreshingMarkers();
     }
 
     @Override

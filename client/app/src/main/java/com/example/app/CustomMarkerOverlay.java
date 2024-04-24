@@ -22,6 +22,8 @@ public class CustomMarkerOverlay extends MyLocationNewOverlay {
         //bmp.setWidth(100);
 
         mPersonBitmap = bmp;
+
+        setPersonAnchor(0.5f, 1.0f);
     }
 
 }

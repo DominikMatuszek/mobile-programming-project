@@ -4,7 +4,6 @@
     android:tint="#EB2626"
     android:viewportWidth="700"
     android:viewportHeight="700"
-    android:translateY="0"
     >
 
     <path

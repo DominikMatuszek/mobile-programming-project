@@ -68,12 +68,12 @@ public class GameMapFragment extends Fragment {
             loc.setLatitude(goal.getLat());
             loc.setLongitude(goal.getLon());
 
-            OverlayFactory.GoalType type = null;
+            OverlayFactory.GoalType type;
 
             // sorry
             if (goal.getScorer().equals(mainActivity.getString("username"))) {
                 type = OverlayFactory.GoalType.FRIENDLY;
-            } else if (goal.getScorer() == null) {
+            } else if (goal.getScorer().equals("null")) {
                 type = OverlayFactory.GoalType.NEUTRAL;
             } else {
                 type = OverlayFactory.GoalType.ENEMY;
@@ -156,7 +156,7 @@ public class GameMapFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
 
         IMapController controller = mapView.getController();
-        controller.setZoom(4.0);
+        controller.setZoom(14.0);
 
         new Thread(
                 () -> {

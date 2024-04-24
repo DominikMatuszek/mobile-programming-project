@@ -61,7 +61,27 @@ public class GameMapFragment extends Fragment {
 
                     for (TargetState goal : goals) {
                         System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
+
+                        Location loc = new Location("");
+                        loc.setLatitude(goal.getLat());
+                        loc.setLongitude(goal.getLon());
+
+                        //CustomMarkerOverlay overlay = OverlayFactory.createGoalOverlay(
+                        //        getResources(),
+                        //        loc,
+                        //        mapView
+                        //);
+
+                        MyLocationNewOverlay overlay = OverlayFactory.createLocationOverlay(
+                                () -> loc,
+                                mapView
+                        );
+
+                        mainActivity.runOnUiThread(
+                                () -> mapView.getOverlays().add(overlay)
+                        );
                     }
+
 
                 }
         ).start();
@@ -71,7 +91,7 @@ public class GameMapFragment extends Fragment {
         MyLocationNewOverlay locationOverlay = OverlayFactory.createLocationOverlay(
                 () -> mainActivity.lastKnownLocation,
                 mapView);
-        
+
         mainActivity.runOnUiThread(
                 () -> mapView.getOverlays().add(locationOverlay)
 
@@ -91,12 +111,12 @@ public class GameMapFragment extends Fragment {
                         }
 
                 );
-                //addGoalsToMap();
+                addGoalsToMap();
                 addCurrentLocationToMap();
             }
         };
 
-        timer.schedule(task, 0, 3000);
+        timer.schedule(task, 0, 5000);
     }
 
     private void centerMapOnCurrentLocationOncePossible() {
@@ -132,7 +152,7 @@ public class GameMapFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
 
         IMapController controller = mapView.getController();
-        controller.setZoom(19.0);
+        controller.setZoom(14.0);
 
         new Thread(
                 () -> {

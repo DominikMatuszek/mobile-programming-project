@@ -9,7 +9,8 @@ class FixedListLocationGenerator:
         
         for row in csv_file:
             if len(row) == 2:
-                locations.append(row)
+                inverted_row = [row[1], row[0]]
+                locations.append(inverted_row)
             
         self.locations = locations
             

@@ -241,4 +241,30 @@ public class Client {
             return false;
         }
     }
+
+    public String getWinner() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/getwinner", body);
+
+            if (connection.getResponseCode() != 200) {
+                return null;
+            }
+
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+
+            String responseString = scanner.nextLine();
+
+            // Removing the quotes
+            return responseString.substring(1, responseString.length() - 1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

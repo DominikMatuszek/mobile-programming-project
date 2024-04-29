@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentLoserBinding;
 
@@ -29,6 +30,12 @@ public class LoserFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
+
+        binding.button2.setOnClickListener(
+                (v) -> activity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(LoserFragment.this).navigate(R.id.action_loserFragment_to_homeFragment)
+                )
+        );
 
     }
 

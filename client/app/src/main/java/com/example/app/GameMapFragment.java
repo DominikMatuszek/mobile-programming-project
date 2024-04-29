@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentGameMapBinding;
 import com.example.app.server_wrapper.Client;
@@ -52,13 +53,38 @@ public class GameMapFragment extends Fragment {
     }
 
     private void notifyIfSomeoneHasWon() {
+        Client client = new Client(
+                mainActivity.getString("username"),
+                mainActivity.getString("password")
+        );
 
+        String winner = client.getWinner();
+
+        if (winner == null) {
+            return;
+        }
+
+        System.out.println("Winner is: " + winner);
+
+        if (winner.equals(mainActivity.getString("username"))) {
+            mainActivity.runOnUiThread(
+                    () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_winnerFragment)
+            );
+        } else {
+            mainActivity.runOnUiThread(
+                    () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_loserFragment)
+            );
+        }
     }
 
     private void notifyIfSomebodyScored(List<TargetState> earlier, List<TargetState> later) {
         // We assume that server always sends goals in the same order.
         // That *should* be the case.
         if (earlier == null || later == null) {
+            return;
+        }
+
+        if (earlier.size() != later.size()) {
             return;
         }
 

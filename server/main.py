@@ -215,7 +215,12 @@ async def get_winner(user_info: AuthData, response: Response):
         response.status_code = status.HTTP_409_CONFLICT
         return
 
-    return lobbies.get_winner(username)
+    winner = lobbies.get_winner(username)
+
+    # Winner leaves game 
+    lobbies.leave_match(winner)
+
+    return winner
 
 @app.post("/amiinactivegame", status_code=200)
 async def am_i_inactive_game(user_info: AuthData, response: Response):

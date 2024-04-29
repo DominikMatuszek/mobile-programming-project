@@ -33,6 +33,8 @@ public class GameMapFragment extends Fragment {
     private MapView mapView;
     private MainActivity mainActivity;
     private Timer locationUpdateTimer;
+    private Timer gameUpdateTimer;
+    private Timer serverUpdateTimer;
     private List<TargetState> targets;
 
     @Override
@@ -168,7 +170,7 @@ public class GameMapFragment extends Fragment {
     }
 
     private void startRefreshingMarkers() {
-        Timer timer = new Timer();
+        gameUpdateTimer = new Timer();
 
         TimerTask task = new TimerTask() {
             @Override
@@ -190,7 +192,7 @@ public class GameMapFragment extends Fragment {
             }
         };
 
-        timer.schedule(task, 0, 5000);
+        gameUpdateTimer.schedule(task, 0, 5000);
     }
 
     private void centerMapOnCurrentLocationOncePossible() {
@@ -228,31 +230,30 @@ public class GameMapFragment extends Fragment {
         IMapController controller = mapView.getController();
         controller.setZoom(14.0);
 
-        new Thread(
-                () -> {
-                    Client client = new Client(
-                            mainActivity.getString("username"),
-                            mainActivity.getString("password")
-                    );
+        serverUpdateTimer = new Timer();
 
-                    while (true) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+        TimerTask updateServer = new TimerTask() {
+            @Override
+            public void run() {
+                Client client = new Client(
+                        mainActivity.getString("username"),
+                        mainActivity.getString("password")
+                );
 
-                        Location lastKnownLocation = mainActivity.lastKnownLocation;
+                Location lastKnownLocation = mainActivity.lastKnownLocation;
 
-                        if (lastKnownLocation != null) {
-                            client.reportPosition(
-                                    lastKnownLocation.getLongitude(),
-                                    lastKnownLocation.getLatitude()
-                            );
-                        }
-                    }
+                if (lastKnownLocation == null) {
+                    return;
                 }
-        ).start();
+
+                client.reportPosition(
+                        lastKnownLocation.getLongitude(),
+                        lastKnownLocation.getLatitude()
+                );
+            }
+        };
+
+        serverUpdateTimer.schedule(updateServer, 0, 2000);
 
         centerMapOnCurrentLocationOncePossible();
         startRefreshingMarkers();
@@ -261,6 +262,11 @@ public class GameMapFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        locationUpdateTimer.cancel();
+        gameUpdateTimer.cancel();
+        serverUpdateTimer.cancel();
+
         binding = null;
     }
 

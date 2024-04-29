@@ -34,7 +34,7 @@ class Goal:
         self.id = id
     
 class GoalTracker:
-    def __init__(self, target_coords, win_threshold=5):
+    def __init__(self, target_coords, win_threshold=1):
         self.target_coords = target_coords
         
         goals = []

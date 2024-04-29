@@ -218,7 +218,7 @@ async def get_winner(user_info: AuthData, response: Response):
     winner = lobbies.get_winner(username)
 
     # Winner leaves game 
-    lobbies.leave_match(winner)
+    lobbies.leave_match(username)
 
     return winner
 

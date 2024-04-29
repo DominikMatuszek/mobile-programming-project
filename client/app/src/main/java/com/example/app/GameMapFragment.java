@@ -1,5 +1,6 @@
 package com.example.app;
 
+import android.app.AlertDialog;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class GameMapFragment extends Fragment {
     private MapView mapView;
     private MainActivity mainActivity;
     private Timer locationUpdateTimer;
+    private List<TargetState> targets;
 
     @Override
     public View onCreateView(
@@ -49,6 +51,34 @@ public class GameMapFragment extends Fragment {
 
     }
 
+    private void notifyIfSomebodyScored(List<TargetState> earlier, List<TargetState> later) {
+        // We assume that server always sends goals in the same order.
+        // That *should* be the case.
+        for (int i = 0; i < earlier.size(); i++) {
+            String earlierScorer = earlier.get(i).getScorer();
+            String laterScorer = later.get(i).getScorer();
+
+            if (earlierScorer.equals(laterScorer)) {
+                continue;
+            }
+
+            boolean itWasMe = laterScorer.equals(mainActivity.getString("username"));
+
+            String message = itWasMe ? "Congrats, you have succesfully captured a point!" :
+                    "Oh no, your enemy has captured a point!";
+
+            mainActivity.runOnUiThread(
+                    () -> {
+                        new AlertDialog.Builder(mainActivity)
+                                .setTitle("Point captured" + (itWasMe ? " by you!" : " by enemy!"))
+                                .setMessage(message)
+                                .setPositiveButton("Ok", null)
+                                .show();
+                    }
+            );
+        }
+    }
+
     private List<Overlay> getGoalsOverlays() {
         List<Overlay> goalOverlays = new ArrayList<>();
 
@@ -60,6 +90,11 @@ public class GameMapFragment extends Fragment {
         System.out.println("Setting goals");
 
         List<TargetState> goals = client.getMatchState();
+
+        List<TargetState> previousTargets = targets;
+        targets = goals;
+
+        notifyIfSomebodyScored(previousTargets, targets);
 
         for (TargetState goal : goals) {
             System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());

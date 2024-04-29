@@ -79,7 +79,12 @@ public class SingularLobbyFragment extends Fragment {
                         update = false;
                         activity.runOnUiThread(() -> {
                             System.out.println("Navigating to game map");
-                            NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
+
+                            try {
+                                NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         });
 
                     } else {
@@ -129,14 +134,8 @@ public class SingularLobbyFragment extends Fragment {
         binding.startGame.setOnClickListener((v) -> {
             Client client = new Client(activity.getString("username"), activity.getString("password"));
 
-            new Thread(() -> {
-                if (client.startMatch() == 200) {
-                    update = false;
-                    activity.runOnUiThread(() -> {
-                        NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
-                    });
-                }
-            }).start();
+            // Navigation to the game map is done earlier in the loop
+            new Thread(client::startMatch).start();
 
         });
     }

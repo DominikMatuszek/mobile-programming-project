@@ -54,6 +54,10 @@ public class GameMapFragment extends Fragment {
     private void notifyIfSomebodyScored(List<TargetState> earlier, List<TargetState> later) {
         // We assume that server always sends goals in the same order.
         // That *should* be the case.
+        if (earlier == null || later == null) {
+            return;
+        }
+
         for (int i = 0; i < earlier.size(); i++) {
             String earlierScorer = earlier.get(i).getScorer();
             String laterScorer = later.get(i).getScorer();
@@ -67,14 +71,14 @@ public class GameMapFragment extends Fragment {
             String message = itWasMe ? "Congrats, you have succesfully captured a point!" :
                     "Oh no, your enemy has captured a point!";
 
+            String button = itWasMe ? "Awesome!" : "Quite the predicament";
+
             mainActivity.runOnUiThread(
-                    () -> {
-                        new AlertDialog.Builder(mainActivity)
-                                .setTitle("Point captured" + (itWasMe ? " by you!" : " by enemy!"))
-                                .setMessage(message)
-                                .setPositiveButton("Ok", null)
-                                .show();
-                    }
+                    () -> new AlertDialog.Builder(mainActivity)
+                            .setTitle("Point captured" + (itWasMe ? " by you!" : " by enemy!"))
+                            .setMessage(message)
+                            .setPositiveButton(button, null)
+                            .show()
             );
         }
     }

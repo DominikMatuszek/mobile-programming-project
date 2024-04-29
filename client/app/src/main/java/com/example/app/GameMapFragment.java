@@ -51,6 +51,10 @@ public class GameMapFragment extends Fragment {
 
     }
 
+    private void notifyIfSomeoneHasWon() {
+
+    }
+
     private void notifyIfSomebodyScored(List<TargetState> earlier, List<TargetState> later) {
         // We assume that server always sends goals in the same order.
         // That *should* be the case.
@@ -156,6 +160,7 @@ public class GameMapFragment extends Fragment {
 
                 );
 
+                notifyIfSomeoneHasWon();
             }
         };
 

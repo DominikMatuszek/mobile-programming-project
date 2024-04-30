@@ -30,7 +30,7 @@ public class Client {
     public Client(String login, String password) {
         this.login = login;
         this.password = password;
-        this.serverURL = "http://172.160.241.20:8000";
+        this.serverURL = "http://soturi.online:8000";
     }
 
     private static void addBody(@NonNull HttpURLConnection connection, @NonNull Map<String, String> body) throws IOException {

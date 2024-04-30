@@ -125,7 +125,19 @@ public class GameMapFragment extends Fragment {
 
         System.out.println("Setting goals");
 
-        List<TargetState> goals = client.getMatchState();
+        List<TargetState> goals = null;
+
+        try {
+            goals = client.getMatchState();
+        } catch (Client.MessedUpMatchStateException e) {
+            e.printStackTrace();
+
+            // I'm in a match and server throws 409 at me, meaning that the match is over.
+            // Fall back to the home screen.
+            mainActivity.runOnUiThread(
+                    () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_homeFragment)
+            );
+        }
 
         List<TargetState> previousTargets = targets;
         targets = goals;

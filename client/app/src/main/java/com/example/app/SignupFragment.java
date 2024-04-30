@@ -49,7 +49,7 @@ public class SignupFragment extends Fragment {
 
                     new Thread(
                             () -> {
-                                int response_code = new Client(username, password, "http://52.169.201.105:8000").register();
+                                int response_code = new Client(username, password).register();
 
                                 String title = "Registration successful";
                                 String message = "You can now start using the app!";
@@ -79,7 +79,7 @@ public class SignupFragment extends Fragment {
                                             if (response_code == 201) {
                                                 activity.saveString("username", username);
                                                 activity.saveString("password", password);
-                                                activity.setClient(new Client(username, password, "http://52.169.201.105:8000"));
+                                                activity.setClient(new Client(username, password));
                                                 NavHostFragment.findNavController(SignupFragment.this).navigate(R.id.action_signupFragment_to_LoginFragment);
                                             }
                                         }

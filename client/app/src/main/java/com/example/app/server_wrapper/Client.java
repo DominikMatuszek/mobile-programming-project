@@ -30,7 +30,7 @@ public class Client {
     public Client(String login, String password) {
         this.login = login;
         this.password = password;
-        this.serverURL = "http://52.169.201.105:8000";
+        this.serverURL = "http://172.160.241.20:8000";
     }
 
     private static void addBody(@NonNull HttpURLConnection connection, @NonNull Map<String, String> body) throws IOException {
@@ -189,13 +189,17 @@ public class Client {
         }
     }
 
-    public List<TargetState> getMatchState() {
+    public List<TargetState> getMatchState() throws MessedUpMatchStateException {
         Map<String, String> body = new HashMap<>();
         body.put("username", login);
         body.put("password", password);
 
         try {
             HttpURLConnection connection = postToServer("/getmatchstate", body);
+
+            if (connection.getResponseCode() != 200) {
+                throw new MessedUpMatchStateException("Server returned " + connection.getResponseCode());
+            }
 
             InputStream response = connection.getInputStream();
             Scanner scanner = new Scanner(response);
@@ -265,6 +269,12 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public class MessedUpMatchStateException extends Exception {
+        public MessedUpMatchStateException(String message) {
+            super(message);
         }
     }
 }

@@ -140,6 +140,19 @@ public class Client {
 
     }
 
+    public String getWaitingLobbies() {
+        try {
+            HttpURLConnection connection = getFromServer("/getwaitinglobbies");
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+
+            return scanner.nextLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "[]";
+        }
+    }
+
     public int startMatch() {
         Map<String, String> body = new HashMap<>();
         body.put("username", login);

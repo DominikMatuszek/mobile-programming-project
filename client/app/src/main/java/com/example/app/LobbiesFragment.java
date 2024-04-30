@@ -40,7 +40,7 @@ public class LobbiesFragment extends Fragment {
             String username = activity.getString("username");
 
             Client client = new Client(username, password);
-            String stringList = client.getLobbies();
+            String stringList = client.getWaitingLobbies();
 
             JSONArray arr = new JSONArray(stringList);
 

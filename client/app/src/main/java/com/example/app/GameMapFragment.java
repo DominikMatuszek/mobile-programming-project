@@ -67,6 +67,8 @@ public class GameMapFragment extends Fragment {
         }
 
         System.out.println("Winner is: " + winner);
+        mainActivity.saveString("recent_winner", winner);
+
 
         if (winner.equals(mainActivity.getString("username"))) {
             mainActivity.runOnUiThread(
@@ -133,16 +135,38 @@ public class GameMapFragment extends Fragment {
             e.printStackTrace();
 
             // I'm in a match and server throws 409 at me, meaning that the match is over.
-            // Fall back to the home screen.
-            mainActivity.runOnUiThread(
-                    () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_homeFragment)
-            );
+            // Fall back to the result screen that seems appropriate.
+            // The only way to get here is to ask the server about the result and then to fail to render the screen
+            // because android is android.
+
+            String probableWinner = mainActivity.getString("recent_winner");
+
+            if (probableWinner == null) {
+                // This makes no sense, but just go back to the home screen
+                mainActivity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_homeFragment)
+                );
+            } else if (probableWinner.equals(mainActivity.getString("username"))) {
+                mainActivity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_winnerFragment)
+                );
+            } else {
+                mainActivity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(GameMapFragment.this).navigate(R.id.action_gameMapFragment_to_loserFragment)
+                );
+            }
+
+            return new ArrayList<>(); // To ensure nothing goes wrong
         }
 
         List<TargetState> previousTargets = targets;
         targets = goals;
 
         notifyIfSomebodyScored(previousTargets, targets);
+
+        if (goals == null) {
+            return goalOverlays;
+        }
 
         for (TargetState goal : goals) {
             System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());

@@ -97,11 +97,11 @@ public class Client {
 
     }
 
-    public int joinLobby(String lobby_owner) {
+    public int joinLobby(String lobbyOwner) {
         Map<String, String> body = new HashMap<>();
         body.put("username", login);
         body.put("password", password);
-        body.put("lobby_owner_username", lobby_owner);
+        body.put("lobby_owner_username", lobbyOwner);
 
         try {
             HttpURLConnection connection = postToServer("/joinlobby", body);

@@ -36,6 +36,14 @@ public class HomeFragment extends Fragment {
         binding.lobbyButton.setOnClickListener((v) -> {
             NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_lobbiesFragment);
         });
+
+        binding.historyButton.setOnClickListener((v) -> {
+            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_loserFragment);
+        });
+
+        binding.testButton.setOnClickListener((v) -> {
+            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_winnerFragment);
+        });
     }
 
     @Override

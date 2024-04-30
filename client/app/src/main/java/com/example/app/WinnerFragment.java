@@ -1,5 +1,6 @@
 package com.example.app;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.example.app.databinding.FragmentWinnerBinding;
 public class WinnerFragment extends Fragment {
 
     private FragmentWinnerBinding binding;
+    private MediaPlayer mediaPlayer;
 
     @Override
     public View onCreateView(
@@ -22,6 +24,10 @@ public class WinnerFragment extends Fragment {
     ) {
 
         binding = FragmentWinnerBinding.inflate(inflater, container, false);
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.win);
+        mediaPlayer.setVolume(1f, 1f);
+        mediaPlayer.start();
+
         return binding.getRoot();
 
     }
@@ -42,6 +48,8 @@ public class WinnerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mediaPlayer.stop();
+        mediaPlayer.release();
         binding = null;
     }
 

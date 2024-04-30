@@ -41,6 +41,12 @@
         <action
             android:id="@+id/action_homeFragment_to_lobbiesFragment"
             app:destination="@id/lobbiesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_loserFragment"
+            app:destination="@id/loserFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_winnerFragment"
+            app:destination="@id/winnerFragment" />
     </fragment>
     <fragment
         android:id="@+id/lobbiesFragment"
@@ -53,7 +59,7 @@
     <fragment
         android:id="@+id/singularLobbyFragment"
         android:name="com.example.app.SingularLobbyFragment"
-        android:label="SingularLobbyFragment">
+        android:label="Lobby">
         <action
             android:id="@+id/action_singularLobbyFragment_to_gameMapFragment"
             app:destination="@id/gameMapFragment" />
@@ -62,7 +68,7 @@
     <fragment
         android:id="@+id/gameMapFragment"
         android:name="com.example.app.GameMapFragment"
-        android:label="GameMapFragment"
+        android:label="Game map"
         tools:layout="@layout/fragment_game_map">
         <action
             android:id="@+id/action_gameMapFragment_to_loserFragment"
@@ -77,7 +83,7 @@
     <fragment
         android:id="@+id/loserFragment"
         android:name="com.example.app.LoserFragment"
-        android:label="fragment_loser"
+        android:label="You've lost!"
         tools:layout="@layout/fragment_loser">
         <action
             android:id="@+id/action_loserFragment_to_homeFragment"
@@ -86,7 +92,7 @@
     <fragment
         android:id="@+id/winnerFragment"
         android:name="com.example.app.WinnerFragment"
-        android:label="fragment_winner"
+        android:label="You've won!"
         tools:layout="@layout/fragment_winner">
         <action
             android:id="@+id/action_winnerFragment_to_homeFragment"

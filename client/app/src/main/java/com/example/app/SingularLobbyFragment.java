@@ -62,6 +62,7 @@ public class SingularLobbyFragment extends Fragment {
         return null;
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 

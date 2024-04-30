@@ -119,12 +119,7 @@ public class Client {
 
         new Thread(() -> {
             try {
-                HttpURLConnection connection = postToServer("/leavelobby", body);
-                int code = connection.getResponseCode();
-
-                if (code != 200) {
-                    System.out.println("Failed to leave lobby, we're gonna have a bad time. Response code: " + code);
-                }
+                postToServer("/leavelobby", body);
             } catch (IOException e) {
                 e.printStackTrace();
             }

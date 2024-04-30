@@ -244,9 +244,7 @@ public class GameMapFragment extends Fragment {
                     GeoPoint center = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 
                     mainActivity.runOnUiThread(
-                            () -> {
-                                controller.setCenter(center);
-                            }
+                            () -> controller.setCenter(center)
                     );
                     locationUpdateTimer.cancel();
                 }
@@ -293,10 +291,14 @@ public class GameMapFragment extends Fragment {
 
         centerMapOnCurrentLocationOncePossible();
         startRefreshingMarkers();
+
+        mainActivity.setFabRunnable(this::centerMapOnCurrentLocationOncePossible);
     }
 
     @Override
     public void onDestroyView() {
+        mainActivity.removeFabRunnable();
+        
         super.onDestroyView();
 
         locationUpdateTimer.cancel();
@@ -305,5 +307,6 @@ public class GameMapFragment extends Fragment {
 
         binding = null;
     }
+
 
 }

@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private Client client = null;
     private LocationManager locationManager;
+
+    private Runnable fabRunnable = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +112,14 @@ public class MainActivity extends AppCompatActivity {
                 }
         ).start();
 
+        binding.floatingActionButton.setOnClickListener((v) -> {
+            if (fabRunnable != null) {
+                fabRunnable.run();
+            }
+        });
+
     }
-    
+
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -198,4 +207,16 @@ public class MainActivity extends AppCompatActivity {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    public void setFabRunnable(Runnable fabRunnable) {
+        this.fabRunnable = fabRunnable;
+        binding.floatingActionButton.setVisibility(View.VISIBLE);
+    }
+
+    public void removeFabRunnable() {
+        this.fabRunnable = null;
+        binding.floatingActionButton.setVisibility(View.GONE);
+    }
+
+    
 }

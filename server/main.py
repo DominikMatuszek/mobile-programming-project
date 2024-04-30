@@ -87,6 +87,10 @@ async def create_lobby(user_info: AuthData, response: Response):
 async def get_lobbies():
     return lobbies.get_matches()
 
+@app.get("getwaitinglobbies", status_code=200)
+async def get_waiting_lobbies():
+    return lobbies.get_matches_that_have_not_started()
+
 class LobbyJoinRequest(BaseModel):
     username: str 
     password: str

@@ -65,3 +65,26 @@ def add_winner_to_database(match_id, winner, conn):
         
         cursor.execute("UPDATE matches SET end_timestamp = %s WHERE id = %s;", (timestamp, match_id))
         conn.commit()
+        
+def get_matches_for_user(username, conn):
+    user_id = get_user_id(username, conn)
+    
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT matches.start_timestamp, matches.end_timestamp, my_results.won, users.username AS enemy
+            FROM matches
+            CROSS JOIN results AS my_results 
+            CROSS JOIN results AS enemy_results
+            JOIN users ON enemy_results.player_id = users.id 
+            WHERE 
+                matches.id = my_results.match_id 
+                AND enemy_results.match_id = my_results.match_id
+                AND my_results.player_id = %s
+                AND enemy_results.player_id != %s
+            """,
+            (user_id, user_id)
+        )
+        result = cursor.fetchall()
+        
+        return result

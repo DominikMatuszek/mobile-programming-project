@@ -7,7 +7,7 @@ from auth import check_credentials
 from player_matcher import PlayerMatcher
 
 from sql import add_match_to_database, add_position_to_database, add_score_to_database, add_winner_to_database
-
+from sql import get_matches_for_user
 
 conn = psycopg2.connect(database="dominik",
                         user="dominik",
@@ -239,3 +239,15 @@ async def am_i_inactive_game(user_info: AuthData, response: Response):
         return
 
     return lobbies.is_match_started(username)
+
+@app.post("/getmatchhistory", status_code=200)
+async def get_match_history(user_info: AuthData, response: Response):
+    if not check_credentials(user_info.username, user_info.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = user_info.username
+    
+    return get_matches_for_user(username, conn)
+
+    

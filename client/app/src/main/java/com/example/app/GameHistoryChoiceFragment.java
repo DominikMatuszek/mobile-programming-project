@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentGameHistoryChoiceBinding;
 import com.example.app.server_wrapper.Client;
@@ -16,10 +17,12 @@ import com.example.app.server_wrapper.GameHistoryHeader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GameHistoryChoiceFragment extends Fragment {
 
     private FragmentGameHistoryChoiceBinding binding;
+    private MainActivity activity;
 
     @Override
     public View onCreateView(
@@ -35,7 +38,7 @@ public class GameHistoryChoiceFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
 
@@ -53,21 +56,24 @@ public class GameHistoryChoiceFragment extends Fragment {
             for (GameHistoryHeader game : games) {
                 Button button = new Button(activity);
 
-                // FIXME: This is bad.
+                // FIXME: This is bad. Add an illustration to symbolize win/loss
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
                 String endTimestamp = sdf.format(new Date(game.endTimestamp.getTime()));
 
                 String displayText = game.enemy + " | " + (game.win ? "Won" : "Lost") + " | " + endTimestamp;
                 button.setText(displayText);
 
-                /*
+
                 button.setOnClickListener((v) -> {
-                    new Thread(() -> {
-                        // TODO
-                    }).start();
+                    // To make sure that Android does not do something funny when it comes to fragments
+                    activity.saveString("presentedGameID", String.valueOf(game.gameID));
+
+                    activity.runOnUiThread(() -> {
+                        NavHostFragment.findNavController(GameHistoryChoiceFragment.this).navigate(R.id.action_gameHistoryChoiceFragment_to_singularHistoryFragment);
+                    });
                 });
-                */
+
 
                 activity.runOnUiThread(() -> binding.historyLayout.addView(button));
 

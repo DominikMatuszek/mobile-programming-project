@@ -105,5 +105,14 @@
         android:id="@+id/gameHistoryChoiceFragment"
         android:name="com.example.app.GameHistoryChoiceFragment"
         android:label="fragment_game_history_choice"
-        tools:layout="@layout/fragment_game_history_choice" />
+        tools:layout="@layout/fragment_game_history_choice">
+        <action
+            android:id="@+id/action_gameHistoryChoiceFragment_to_singularHistoryFragment"
+            app:destination="@id/singularHistoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/singularHistoryFragment"
+        android:name="com.example.app.SingularHistoryFragment"
+        android:label="fragment_singular_history"
+        tools:layout="@layout/fragment_singular_history" />
 </navigation>

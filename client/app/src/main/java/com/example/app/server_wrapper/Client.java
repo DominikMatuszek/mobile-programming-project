@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -278,6 +279,75 @@ public class Client {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public List<GameHistoryHeader> getGameHistory() {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+
+        try {
+            HttpURLConnection connection = postToServer("/getmatchhistory", body);
+
+            if (connection.getResponseCode() != 200) {
+                return new ArrayList<>();
+            }
+
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+
+            String responseString = scanner.nextLine();
+
+            List<GameHistoryHeader> gameHistoryHeaders = new ArrayList<>();
+
+            JSONArray objectMaps = new JSONArray(responseString);
+
+            for (int i = 0; i < objectMaps.length(); i++) {
+                JSONArray arr = objectMaps.getJSONArray(i);
+
+                String gameIDString = arr.getString(0);
+                String startTimestampString = arr.getString(1);
+                String endTimestampString = arr.getString(2);
+                String wonString = arr.getString(3);
+                String enemy = arr.getString(4);
+
+                // Just in case server decides to send us some nonsensical data
+                if (startTimestampString.equals("null") || endTimestampString.equals("null")) {
+                    continue;
+                }
+
+                // ISO 8601 -> Java
+                startTimestampString = startTimestampString.replace("T", " ");
+                endTimestampString = endTimestampString.replace("T", " ");
+
+                System.out.println(startTimestampString);
+                System.out.println(endTimestampString);
+
+                int gameID = Integer.parseInt(gameIDString);
+                Timestamp startTimestamp = Timestamp.valueOf(startTimestampString);
+                Timestamp endTimestamp = Timestamp.valueOf(endTimestampString);
+                boolean won = Boolean.parseBoolean(wonString);
+
+
+                System.out.println("GAME HISTORY");
+                System.out.println(gameID);
+                System.out.println(startTimestamp);
+                System.out.println(endTimestamp);
+                System.out.println(won);
+                System.out.println(enemy);
+
+                GameHistoryHeader header = new GameHistoryHeader(gameID, enemy, endTimestamp, startTimestamp, won);
+
+                gameHistoryHeaders.add(header);
+            }
+
+            return gameHistoryHeaders;
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
     }
 
     public class MessedUpMatchStateException extends Exception {

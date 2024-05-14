@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
         });
 
         binding.historyButton.setOnClickListener((v) -> {
-            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_loserFragment);
+            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_gameHistoryChoiceFragment);
         });
 
         binding.testButton.setOnClickListener((v) -> {

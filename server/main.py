@@ -7,7 +7,7 @@ from auth import check_credentials
 from player_matcher import PlayerMatcher
 
 from sql import add_match_to_database, add_position_to_database, add_score_to_database, add_winner_to_database
-from sql import get_matches_for_user
+from sql import get_matches_for_user, get_user_locations_in_a_match
 
 conn = psycopg2.connect(database="dominik",
                         user="dominik",
@@ -249,5 +249,22 @@ async def get_match_history(user_info: AuthData, response: Response):
     username = user_info.username
     
     return get_matches_for_user(username, conn)
+
+class LocationsForGameRequest(BaseModel):
+    username: str
+    password: str
+    game_id: int 
+
+@app.post("/getlocations", status_code=200)
+async def get_locations(query: LocationsForGameRequest, response: Response):
+    if not check_credentials(query.username, query.password, conn):
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return 
+
+    username = query.username
+    game_id = query.game_id
+    
+    return get_user_locations_in_a_match(username, game_id, conn)
+    
 
     

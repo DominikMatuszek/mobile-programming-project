@@ -88,3 +88,19 @@ def get_matches_for_user(username, conn):
         result = cursor.fetchall()
         
         return result
+    
+def get_user_locations_in_a_match(username, id, conn):
+    user_id = get_user_id(username, conn)
+    
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT longtitude, latitude
+            FROM recorded_locations
+            WHERE user_id = %s AND match_id = %s
+            """,
+            (user_id, id)
+        )
+        result = cursor.fetchall()
+        
+        return result

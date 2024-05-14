@@ -95,7 +95,7 @@ def get_user_locations_in_a_match(username, id, conn):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            SELECT longtitude, latitude
+            SELECT longtitude, latitude, timestamp
             FROM recorded_locations
             WHERE user_id = %s AND match_id = %s
             """,

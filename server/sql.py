@@ -57,8 +57,11 @@ def add_score_to_database(match_id, player, target_id, conn):
         
 def add_winner_to_database(match_id, winner, conn):
     winner_id = get_user_id(winner, conn)
-    
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
     with conn.cursor() as cursor:
         cursor.execute("UPDATE results SET won = TRUE WHERE player_id = %s AND match_id = %s;", (winner_id, match_id))
         cursor.execute("UPDATE results SET won = FALSE WHERE player_id != %s AND match_id = %s;", (winner_id, match_id))
+        
+        cursor.execute("UPDATE matches SET end_timestamp = %s WHERE id = %s;", (timestamp, match_id))
         conn.commit()

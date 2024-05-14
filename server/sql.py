@@ -72,7 +72,7 @@ def get_matches_for_user(username, conn):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            SELECT matches.start_timestamp, matches.end_timestamp, my_results.won, users.username AS enemy
+            SELECT matches.id, matches.start_timestamp, matches.end_timestamp, my_results.won, users.username AS enemy
             FROM matches
             CROSS JOIN results AS my_results 
             CROSS JOIN results AS enemy_results

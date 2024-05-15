@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.app.databinding.FragmentGameHistoryChoiceBinding;
 import com.example.app.server_wrapper.Client;
 import com.example.app.server_wrapper.GameHistoryHeader;
+import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,16 +54,21 @@ public class GameHistoryChoiceFragment extends Fragment {
             List<GameHistoryHeader> games = client.getGameHistory();
 
             for (GameHistoryHeader game : games) {
-                Button button = new Button(activity);
+                MaterialButton button = new MaterialButton(activity);
 
                 // FIXME: This is bad. Add an illustration to symbolize win/loss
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
                 String endTimestamp = sdf.format(new Date(game.endTimestamp.getTime()));
 
-                String displayText = game.enemy + " | " + (game.win ? "Won" : "Lost") + " | " + endTimestamp;
+                String displayText = activity.getString("username") + " vs. " + game.enemy + " | " + endTimestamp;
                 button.setText(displayText);
 
+                if (game.win) {
+                    button.setIcon(activity.getDrawable(R.drawable.checkmark));
+                } else {
+                    button.setIcon(activity.getDrawable(R.drawable.failmark));
+                }
 
                 button.setOnClickListener((v) -> {
                     // To make sure that Android does not do something funny when it comes to fragments

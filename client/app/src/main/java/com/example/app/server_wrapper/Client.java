@@ -1,5 +1,7 @@
 package com.example.app.server_wrapper;
 
+import android.location.Location;
+
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -349,6 +351,50 @@ public class Client {
         }
 
     }
+
+    public List<Location> getLocations(String gameID) {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+        body.put("game_id", gameID);
+
+        try {
+            HttpURLConnection connection = postToServer("/getlocations", body);
+
+            if (connection.getResponseCode() != 200) {
+                return new ArrayList<>();
+            }
+
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+
+            String responseString = scanner.nextLine();
+
+            List<Location> locations = new ArrayList<>();
+
+            JSONArray objectMaps = new JSONArray(responseString);
+
+            for (int i = 0; i < objectMaps.length(); i++) {
+                JSONArray array = objectMaps.getJSONArray(i);
+
+                double lon = array.getDouble(0);
+                double lat = array.getDouble(1);
+
+                Location location = new Location("");
+                location.setLongitude(lon);
+                location.setLatitude(lat);
+
+                locations.add(location);
+            }
+
+            return locations;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
+    }
+
 
     public class MessedUpMatchStateException extends Exception {
         public MessedUpMatchStateException(String message) {

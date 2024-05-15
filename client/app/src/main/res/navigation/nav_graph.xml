@@ -114,5 +114,9 @@
         android:id="@+id/singularHistoryFragment"
         android:name="com.example.app.SingularHistoryFragment"
         android:label="Game History"
-        tools:layout="@layout/fragment_singular_history" />
+        tools:layout="@layout/fragment_singular_history">
+        <action
+            android:id="@+id/action_singularHistoryFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

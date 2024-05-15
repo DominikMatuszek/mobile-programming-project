@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.play.services.maps)
     implementation("org.osmdroid:osmdroid-android:6.1.18")
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

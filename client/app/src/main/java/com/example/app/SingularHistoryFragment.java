@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentSingularHistoryBinding;
 import com.example.app.server_wrapper.Client;
+import com.example.app.server_wrapper.GameHistoryHeader;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.Road;
@@ -21,6 +22,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,13 +43,56 @@ public class SingularHistoryFragment extends Fragment {
 
         MapTileProviderBasic tileProvider = new MapTileProviderBasic(inflater.getContext());
         mapView = new MapView(inflater.getContext(), tileProvider, null);
+        binding.mapLayout.addView(mapView);
 
-        return mapView;
+        return binding.getRoot();
     }
 
     private void configureMap() {
         IMapController mapController = mapView.getController();
         mapController.setZoom(14.0);
+    }
+
+    private void setTextOverlay() {
+        String username = mainActivity.getString("username");
+        String gameID = mainActivity.getString("presentedGameID");
+        String password = mainActivity.getString("password");
+
+        Client client = new Client(username, password);
+
+        GameHistoryHeader header = client.getGameHistory().stream()
+                .filter(game -> Integer.valueOf(game.gameID).equals(Integer.valueOf(gameID)))
+                .findFirst()
+                .orElse(null);
+
+        if (header == null) {
+            // We have a serious problem
+            mainActivity.runOnUiThread(
+                    NavHostFragment.findNavController(this)::popBackStack
+            );
+        }
+
+        Timestamp startTimestamp = header.startTimestamp;
+        Timestamp endTimestamp = header.endTimestamp;
+
+        long duration = endTimestamp.getTime() - startTimestamp.getTime();
+        long seconds = duration / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+
+        long truncatedHours = hours;
+        long truncatedMinutes = minutes % 60;
+        long truncatedSeconds = seconds % 60;
+
+        String durationString = "Duration: " + truncatedHours + "h " + truncatedMinutes + "m " + truncatedSeconds + "s";
+
+        mainActivity.runOnUiThread(
+                () -> {
+                    binding.startTimestamp.setText("Started: " + startTimestamp.toString());
+                    binding.endTimestamp.setText("Ended: " + endTimestamp.toString());
+                    binding.duration.setText(durationString);
+                }
+        );
     }
 
     private void setPath() {
@@ -101,6 +146,7 @@ public class SingularHistoryFragment extends Fragment {
 
         configureMap();
         new Thread(this::setPath).start();
+        new Thread(this::setTextOverlay).start();
     }
 
     @Override

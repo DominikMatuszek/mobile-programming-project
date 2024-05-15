@@ -109,6 +109,9 @@
         <action
             android:id="@+id/action_gameHistoryChoiceFragment_to_singularHistoryFragment"
             app:destination="@id/singularHistoryFragment" />
+        <action
+            android:id="@+id/action_gameHistoryChoiceFragment_to_singularHistoryFragmentProxy"
+            app:destination="@id/singularHistoryFragmentProxy" />
     </fragment>
     <fragment
         android:id="@+id/singularHistoryFragment"
@@ -119,4 +122,9 @@
             android:id="@+id/action_singularHistoryFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/singularHistoryFragmentProxy"
+        android:name="com.example.app.SingularHistoryFragmentProxy"
+        android:label="fragment_singular_history_proxy"
+        tools:layout="@layout/fragment_singular_history_proxy" />
 </navigation>

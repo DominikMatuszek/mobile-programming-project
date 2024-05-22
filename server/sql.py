@@ -109,7 +109,7 @@ def get_targets_in_a_match(id, conn):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            SELECT users.username, targets.longtitude, targets.latitude 
+            SELECT targets.id, targets.longtitude, targets.latitude, users.username 
             FROM claims
             JOIN users ON users.id = claims.player_id
             JOIN targets ON targets.id = claims.target_id

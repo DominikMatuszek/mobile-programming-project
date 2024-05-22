@@ -274,7 +274,7 @@ async def get_claims(query: LocationsForGameRequest, response: Response):
     
     game_id = query.game_id
     
-    return get_targets_in_a_match(game_id)
+    return get_targets_in_a_match(game_id, conn)
     
 
     

@@ -31,6 +31,8 @@ public class HomeFragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
+        activity.toolbar.setVisibility(View.VISIBLE);
+
         String username = activity.getString("username");
         binding.greeter.setText("Hello there, " + username + "!");
         binding.lobbyButton.setOnClickListener((v) -> {

@@ -20,6 +20,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.app.databinding.ActivityMainBinding;
 import com.example.app.server_wrapper.Client;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.config.IConfigurationProvider;
@@ -35,11 +36,11 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity {
 
     public Location lastKnownLocation = null;
+    public MaterialToolbar toolbar;
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private Client client = null;
     private LocationManager locationManager;
-
     private Runnable fabRunnable = null;
 
     @Override
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        toolbar = binding.toolbar;
 
         request_permissions();
 
@@ -218,5 +220,5 @@ public class MainActivity extends AppCompatActivity {
         binding.floatingActionButton.setVisibility(View.GONE);
     }
 
-    
+
 }

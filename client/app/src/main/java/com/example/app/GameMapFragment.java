@@ -260,6 +260,7 @@ public class GameMapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mainActivity = (MainActivity) getActivity();
+        mainActivity.toolbar.setVisibility(View.GONE);
 
         IMapController controller = mapView.getController();
         controller.setZoom(14.0);
@@ -298,7 +299,7 @@ public class GameMapFragment extends Fragment {
     @Override
     public void onDestroyView() {
         mainActivity.removeFabRunnable();
-        
+
         super.onDestroyView();
 
         locationUpdateTimer.cancel();

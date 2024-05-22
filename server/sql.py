@@ -112,7 +112,7 @@ def get_targets_in_a_match(id, conn):
             SELECT targets.id, targets.longtitude, targets.latitude, users.username 
             FROM claims
             JOIN users ON users.id = claims.player_id
-            JOIN targets ON targets.id = claims.target_id
+            RIGHT JOIN targets ON targets.id = claims.target_id
             WHERE targets.match_id = %s
             """,
             (id,)

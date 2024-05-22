@@ -200,6 +200,52 @@ public class Client {
         }
     }
 
+    @NonNull
+    private List<TargetState> parseTargetStringWithMap(String JSONString) throws JSONException {
+        List<TargetState> targetStates = new ArrayList<>();
+
+        JSONArray objectMaps = new JSONArray(JSONString);
+
+        for (int i = 0; i < objectMaps.length(); i++) {
+            JSONObject map = objectMaps.getJSONObject(i);
+
+            System.out.println(map);
+
+            double lon = map.getDouble("lon");
+            double lat = map.getDouble("lat");
+            String scorer = map.getString("scorer");
+
+            TargetState targetState = new TargetState(lon, lat, scorer);
+
+            targetStates.add(targetState);
+        }
+
+        return targetStates;
+    }
+
+    @NonNull
+    private List<TargetState> parseTargetStringWithArray(String JSONString) throws JSONException {
+        List<TargetState> targetStates = new ArrayList<>();
+
+        JSONArray objectMaps = new JSONArray(JSONString);
+
+        for (int i = 0; i < objectMaps.length(); i++) {
+            JSONArray arr = objectMaps.getJSONArray(i);
+
+            System.out.println(arr);
+
+            double lon = arr.getDouble(1);
+            double lat = arr.getDouble(2);
+            String scorer = arr.getString(3);
+
+            TargetState targetState = new TargetState(lon, lat, scorer);
+
+            targetStates.add(targetState);
+        }
+
+        return targetStates;
+    }
+
     public List<TargetState> getMatchState() throws MessedUpMatchStateException {
         Map<String, String> body = new HashMap<>();
         body.put("username", login);
@@ -214,28 +260,30 @@ public class Client {
 
             InputStream response = connection.getInputStream();
             Scanner scanner = new Scanner(response);
-
             String responseString = scanner.nextLine();
 
-            List<TargetState> targetStates = new ArrayList<>();
+            return parseTargetStringWithMap(responseString);
 
-            JSONArray objectMaps = new JSONArray(responseString);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
-            for (int i = 0; i < objectMaps.length(); i++) {
-                JSONObject map = objectMaps.getJSONObject(i);
+    public List<TargetState> getClaims(int id) throws MessedUpMatchStateException {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", login);
+        body.put("password", password);
+        body.put("game_id", Integer.toString(id));
 
-                System.out.println(map);
+        try {
+            HttpURLConnection connection = postToServer("/getclaims", body);
 
-                double lon = map.getDouble("lon");
-                double lat = map.getDouble("lat");
-                String scorer = map.getString("scorer");
+            InputStream response = connection.getInputStream();
+            Scanner scanner = new Scanner(response);
+            String responseString = scanner.nextLine();
 
-                TargetState targetState = new TargetState(lon, lat, scorer);
-
-                targetStates.add(targetState);
-            }
-
-            return targetStates;
+            return parseTargetStringWithArray(responseString);
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();

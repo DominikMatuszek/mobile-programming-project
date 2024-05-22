@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.app.databinding.FragmentSingularHistoryBinding;
 import com.example.app.server_wrapper.Client;
 import com.example.app.server_wrapper.GameHistoryHeader;
+import com.example.app.server_wrapper.TargetState;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.Road;
@@ -20,6 +21,7 @@ import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.sql.Timestamp;
@@ -32,6 +34,7 @@ public class SingularHistoryFragment extends Fragment {
     private FragmentSingularHistoryBinding binding;
     private MapView mapView;
     private MainActivity mainActivity;
+
 
     @Override
     public View onCreateView(
@@ -129,6 +132,73 @@ public class SingularHistoryFragment extends Fragment {
 
     }
 
+    @NonNull
+    private List<Overlay> getGoalsOverlays() {
+        List<Overlay> goalOverlays = new ArrayList<>();
+
+        Client client = new Client(
+                mainActivity.getString("username"),
+                mainActivity.getString("password")
+        );
+
+        String gameID = mainActivity.getString("presentedGameID");
+
+        List<TargetState> goals;
+
+        try {
+            goals = client.getClaims(Integer.parseInt(gameID));
+        } catch (Client.MessedUpMatchStateException e) {
+            // Should absolutely not happen
+            // But if it does
+            // Well alright, keep your secrets
+            return new ArrayList<>();
+        }
+
+        for (TargetState goal : goals) {
+            System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
+
+            Location loc = new Location("");
+            loc.setLatitude(goal.getLat());
+            loc.setLongitude(goal.getLon());
+
+            OverlayFactory.GoalType type;
+
+            // sorry
+            if (goal.getScorer().equals(mainActivity.getString("username"))) {
+                type = OverlayFactory.GoalType.FRIENDLY;
+            } else if (goal.getScorer().equals("null")) {
+                type = OverlayFactory.GoalType.NEUTRAL;
+            } else {
+                type = OverlayFactory.GoalType.ENEMY;
+            }
+
+            CustomMarkerOverlay overlay = OverlayFactory.createGoalOverlay(
+                    getResources(),
+                    type,
+                    loc,
+                    mapView
+            );
+
+            goalOverlays.add(overlay);
+        }
+
+        return goalOverlays;
+    }
+
+
+    private void setGoalOverlays() {
+        List<Overlay> goalOverlays = getGoalsOverlays();
+
+        System.out.println("Goal overlays: " + goalOverlays.size());
+
+        mainActivity.runOnUiThread(
+                () -> {
+                    mapView.getOverlays().addAll(goalOverlays);
+                    mapView.invalidate();
+                }
+        );
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -147,6 +217,7 @@ public class SingularHistoryFragment extends Fragment {
         configureMap();
         new Thread(this::setPath).start();
         new Thread(this::setTextOverlay).start();
+        new Thread(this::setGoalOverlays).start();
     }
 
     @Override

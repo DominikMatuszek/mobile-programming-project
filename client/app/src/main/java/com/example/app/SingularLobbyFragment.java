@@ -1,5 +1,6 @@
 package com.example.app;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ public class SingularLobbyFragment extends Fragment {
     private boolean update = true;
 
     private FragmentSingulerLobbyBinding binding;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(
@@ -26,6 +28,9 @@ public class SingularLobbyFragment extends Fragment {
     ) {
 
         binding = FragmentSingulerLobbyBinding.inflate(inflater, container, false);
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Loading");
+        progressDialog.show();
         return binding.getRoot();
 
     }
@@ -122,6 +127,7 @@ public class SingularLobbyFragment extends Fragment {
                         // It happens
                     }
                 });
+                progressDialog.dismiss();
 
                 try {
                     Thread.sleep(1000);
@@ -143,6 +149,8 @@ public class SingularLobbyFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        System.out.println("Destroying view");
+
         update = false;
 
         String username = ((MainActivity) getActivity()).getString("username");

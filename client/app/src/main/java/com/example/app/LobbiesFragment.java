@@ -29,6 +29,7 @@ public class LobbiesFragment extends Fragment {
     ) {
 
         binding = FragmentLobbiesBinding.inflate(inflater, container, false);
+
         return binding.getRoot();
 
     }

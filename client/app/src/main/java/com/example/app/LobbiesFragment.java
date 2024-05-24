@@ -1,10 +1,14 @@
 package com.example.app;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Space;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,6 +16,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.app.databinding.FragmentLobbiesBinding;
 import com.example.app.server_wrapper.Client;
+import com.example.app.views.IconWithText;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 
@@ -96,23 +102,16 @@ public class LobbiesFragment extends Fragment {
             List<String> lobbies = getLobbies();
 
             for (String lobby : lobbies) {
-                Button button = new Button(activity);
-                button.setText(lobby);
 
-                button.setOnClickListener((v) -> {
-                    new Thread(() -> {
-                        int status = client.joinLobby(lobby);
+                LobbyChoice row = new LobbyChoice(getContext(), lobby);
+                Space space = new Space(getContext());
 
-                        if (status == 200) {
-                            activity.runOnUiThread(() -> {
-                                NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
-                            });
-                        }
+                space.setMinimumHeight(40);
 
-                    }).start();
+                activity.runOnUiThread(() -> {
+                    binding.lobbiesLayout.addView(row);
+                    binding.lobbiesLayout.addView(space);
                 });
-
-                activity.runOnUiThread(() -> binding.lobbiesLayout.addView(button));
             }
         }).start();
 
@@ -122,6 +121,44 @@ public class LobbiesFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private class LobbyChoice extends LinearLayout {
+
+        public LobbyChoice(Context context, String username) {
+            super(context);
+
+            this.setOrientation(LinearLayout.HORIZONTAL);
+            this.setGravity(Gravity.CENTER_HORIZONTAL);
+
+            IconWithText iconWithText = new IconWithText(context, getResources().getDrawable(R.drawable.person_icon), username, 20);
+            Space space = new Space(context);
+            space.setMinimumWidth(40);
+            Button button = new MaterialButton(context);
+            button.setText("Join lobby");
+
+            button.setOnClickListener(
+                    (v) -> {
+                        new Thread(() -> {
+                            MainActivity activity = (MainActivity) getActivity();
+                            Client client = new Client(activity.getString("username"), activity.getString("password"));
+
+                            int status = client.joinLobby(username);
+
+                            if (status == 200) {
+                                activity.runOnUiThread(() -> {
+                                    NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
+                                });
+                            }
+
+                        }).start();
+                    }
+            );
+
+            this.addView(iconWithText);
+            this.addView(space);
+            this.addView(button);
+        }
     }
 
 }

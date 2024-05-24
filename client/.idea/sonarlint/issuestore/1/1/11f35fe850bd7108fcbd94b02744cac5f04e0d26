@@ -1,0 +1,9 @@
+
+’
+java:S1192M"JDefine a constant instead of duplicating this literal "password" 13 times.(İÂŠˆûÿÿÿÿ8­¨Öøò1J$fb1da810-d63c-4331-8b35-5e7f48bb51bd
+’
+java:S1192L"JDefine a constant instead of duplicating this literal "username" 13 times.(ÜœØÿÿÿÿÿ8®¨Öøò1J$56c95815-54dd-443a-a10c-6beb1ccd431c
+n	java:S117Ì"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„ş­³8ÌÃµİú1
+s	java:S117ã"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³øü•ÿÿÿÿÿ8ÍÃµİú1
+¹
+java:S1130‘"šRemove the declaration of thrown exception 'com.example.app.server_wrapper.Client$MessedUpMatchStateException', as it cannot be thrown from method's body.(†”8»Äµİú1

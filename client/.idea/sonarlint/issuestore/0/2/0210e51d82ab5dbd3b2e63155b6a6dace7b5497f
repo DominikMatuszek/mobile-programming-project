@@ -1,0 +1,18 @@
+
+	java:S112^"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8•“ùò1J$cf003b3c-bd17-4f6c-9627-7629a17684c3
+}
+java:S1161D":Add the "@Override" annotation above this method signature(¼²Á÷8©“ùò1J$b200f7e1-9bee-49d2-a8e3-37163a2799f9
+r
+java:S1611J"/Remove the parentheses around the "v" parameter(ıØ¯8©“ùò1J$4eb3522c-36db-4d36-a860-c947815779d4
+o
+java:S1602J",Remove useless curly braces around statement(ıØ¯8©“ùò1J$0cd478a3-6f40-4a77-b478-26f559f978ac
+o
+java:S1602O",Remove useless curly braces around statement(ò‘Îß8ª“ùò1J$5e63f7b5-cfc5-47fb-aa5c-3852c692476f
+¡
+java:S2142]"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8«“ùò1J$1faad17d-6903-4c93-9db7-45f4b669e8de
+w
+java:S1611g"/Remove the parentheses around the "v" parameter(§ÂèÂıÿÿÿÿ8¬“ùò1J$a41808ec-d5c9-4c62-8f23-88bf5827096a
+t
+java:S1602g",Remove useless curly braces around statement(§ÂèÂıÿÿÿÿ8¬“ùò1J$c4ccb9cc-0380-4821-8cc2-313d5d82fd20
+o
+java:S1602l",Remove useless curly braces around statement(ò‘Îß8¬“ùò1J$855d8592-4db1-43cf-9f0c-ba078ca5aaf8

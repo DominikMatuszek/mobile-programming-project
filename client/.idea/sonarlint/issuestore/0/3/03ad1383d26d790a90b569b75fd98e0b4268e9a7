@@ -1,0 +1,9 @@
+
+
+java:S1192,"FDefine a constant instead of duplicating this literal "Error" 3 times.(§¨¨ˆùÿÿÿÿ8ßø¾òò1J$37a42bd3-86e1-42a2-9c24-01825379a258
+“	java:S1174"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(«‰8ßø¾òò1J$67183edd-018d-4961-bb76-fe5e2be9c770
+’	java:S1178"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Æ•Ø8àø¾òò1J$95f604cc-3c1b-4731-b60f-99b1146eee63
+}
+java:S1161":Add the "@Override" annotation above this method signature(¼²Á÷8êø¾òò1J$2a958f84-fabe-491c-bc7b-b7ac8d84e0ba
+r
+java:S1611$"/Remove the parentheses around the "v" parameter(Š©ı8ëø¾òò1J$eb79b7ed-ef19-40c4-b62c-a63602d468f5

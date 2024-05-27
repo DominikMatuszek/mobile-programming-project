@@ -156,9 +156,11 @@ public class SingularLobbyFragment extends Fragment {
         String username = ((MainActivity) getActivity()).getString("username");
         String password = ((MainActivity) getActivity()).getString("password");
 
-        Client client = new Client(username, password);
-        client.leaveLobby();
-
+        new Thread(() -> {
+            Client client = new Client(username, password);
+            client.leaveLobby();
+        }).start();
+        
         super.onDestroyView();
         binding = null;
     }

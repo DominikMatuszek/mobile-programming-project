@@ -66,6 +66,9 @@
         <action
             android:id="@+id/action_singularLobbyFragment_to_gameMapFragment"
             app:destination="@id/gameMapFragment" />
+        <action
+            android:id="@+id/action_singularLobbyFragment_to_lobbiesFragment"
+            app:destination="@id/lobbiesFragment" />
     </fragment>
 
     <fragment

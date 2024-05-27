@@ -74,6 +74,7 @@ public class LobbiesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
+        activity.toolbar.setVisibility(View.VISIBLE);
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
         binding.createlobby.setOnClickListener((v) -> {

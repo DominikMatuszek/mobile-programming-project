@@ -72,6 +72,7 @@ public class SingularLobbyFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
+        activity.toolbar.setVisibility(View.GONE);
 
         new Thread(() -> {
             while (update) {
@@ -145,6 +146,13 @@ public class SingularLobbyFragment extends Fragment {
             new Thread(client::startMatch).start();
 
         });
+
+        binding.leaveLobby.setOnClickListener((v) -> {
+            update = false;
+            Client client = new Client(activity.getString("username"), activity.getString("password"));
+            client.leaveLobby();
+            NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_lobbiesFragment);
+        });
     }
 
     @Override
@@ -160,7 +168,7 @@ public class SingularLobbyFragment extends Fragment {
             Client client = new Client(username, password);
             client.leaveLobby();
         }).start();
-        
+
         super.onDestroyView();
         binding = null;
     }

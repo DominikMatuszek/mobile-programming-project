@@ -115,13 +115,14 @@ public class Client {
         }
     }
 
-    public void leaveLobby() {
+    public int leaveLobby() {
         Map<String, String> body = new HashMap<>();
         body.put("username", login);
         body.put("password", password);
 
         try {
-            postToServer("/leavelobby", body);
+            HttpURLConnection conn = postToServer("/leavelobby", body);
+            return conn.getResponseCode();
         } catch (IOException e) {
             throw new RuntimeException("Failed to leave lobby");
         }

@@ -77,6 +77,7 @@ public class LobbiesFragment extends Fragment {
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
         binding.createlobby.setOnClickListener((v) -> {
+            System.out.println("Creating lobby BUTTON PRESSED");
             new Thread(() -> {
                 int status = client.createLobby();
 

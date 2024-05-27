@@ -120,13 +120,12 @@ public class Client {
         body.put("username", login);
         body.put("password", password);
 
-        new Thread(() -> {
-            try {
-                postToServer("/leavelobby", body);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        try {
+            postToServer("/leavelobby", body);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to leave lobby");
+        }
+
     }
 
     public String getLobbies() {

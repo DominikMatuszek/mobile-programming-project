@@ -150,8 +150,14 @@ public class SingularLobbyFragment extends Fragment {
         binding.leaveLobby.setOnClickListener((v) -> {
             update = false;
             Client client = new Client(activity.getString("username"), activity.getString("password"));
-            client.leaveLobby();
-            NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_lobbiesFragment);
+
+            new Thread(() -> {
+                client.leaveLobby();
+                activity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_lobbiesFragment)
+                );
+            }).start();
+
         });
     }
 

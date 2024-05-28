@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.app.databinding.FragmentSingulerLobbyBinding;
+import com.example.app.databinding.FragmentSingularLobbyBinding;
 import com.example.app.server_wrapper.Client;
 
 import org.json.JSONArray;
@@ -18,7 +18,7 @@ import org.json.JSONArray;
 import java.util.Timer;
 
 public class SingularLobbyFragment extends Fragment {
-    private FragmentSingulerLobbyBinding binding;
+    private FragmentSingularLobbyBinding binding;
     private ProgressDialog progressDialog;
     private MainActivity activity;
     private Timer refreshTimer;
@@ -29,7 +29,7 @@ public class SingularLobbyFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentSingulerLobbyBinding.inflate(inflater, container, false);
+        binding = FragmentSingularLobbyBinding.inflate(inflater, container, false);
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading");
         progressDialog.show();
@@ -139,7 +139,7 @@ public class SingularLobbyFragment extends Fragment {
         activity.toolbar.setVisibility(View.GONE);
 
         startRefreshingScreen();
-        
+
         binding.startGame.setOnClickListener(v -> {
             Client client = new Client(activity.getString("username"), activity.getString("password"));
 

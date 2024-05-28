@@ -85,8 +85,6 @@ public class SingularLobbyFragment extends Fragment {
                     if (client.amIInActiveMatch()) {
                         update = false;
                         activity.runOnUiThread(() -> {
-                            System.out.println("Navigating to game map");
-
                             try {
                                 NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
                             } catch (Exception e) {
@@ -94,8 +92,6 @@ public class SingularLobbyFragment extends Fragment {
                             }
                         });
 
-                    } else {
-                        System.out.println("Not in active match");
                     }
                 }
                 ).start();
@@ -163,8 +159,6 @@ public class SingularLobbyFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        System.out.println("Destroying view");
-
         update = false;
 
         String username = ((MainActivity) getActivity()).getString("username");

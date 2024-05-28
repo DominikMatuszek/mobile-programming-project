@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         LocationListener locationListener = (Location l) -> {
-            System.out.println("Location changed");
             lastKnownLocation = l;
         };
 
@@ -88,24 +87,15 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        System.out.println("Checking location");
-                        System.out.println(lastKnownLocation);
-
                         runOnUiThread(
                                 () -> {
-                                    System.out.println("Running on UI thread");
                                     try {
-                                        System.out.println("I am in a try block");
-
                                         locationManager.requestLocationUpdates(
                                                 "fused",
                                                 1L,
                                                 0.1f,
                                                 locationListener);
-                                        System.out.println("I have requested a single update");
                                     } catch (SecurityException e) {
-
-                                        System.out.println("Waiting for permissions");
                                         // We will wait
                                     }
                                 }
@@ -126,8 +116,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        System.out.println("HALO");
     }
 
 

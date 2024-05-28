@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_homeFragment_to_gameHistoryChoiceFragment"
             app:destination="@id/gameHistoryChoiceFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
     </fragment>
     <fragment
         android:id="@+id/lobbiesFragment"

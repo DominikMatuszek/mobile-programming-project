@@ -209,8 +209,6 @@ public class Client {
         for (int i = 0; i < objectMaps.length(); i++) {
             JSONObject map = objectMaps.getJSONObject(i);
 
-            System.out.println(map);
-
             double lon = map.getDouble("lon");
             double lat = map.getDouble("lat");
             String scorer = map.getString("scorer");
@@ -231,8 +229,6 @@ public class Client {
 
         for (int i = 0; i < objectMaps.length(); i++) {
             JSONArray arr = objectMaps.getJSONArray(i);
-
-            System.out.println(arr);
 
             double lon = arr.getDouble(1);
             double lat = arr.getDouble(2);
@@ -370,21 +366,10 @@ public class Client {
                 startTimestampString = startTimestampString.replace("T", " ");
                 endTimestampString = endTimestampString.replace("T", " ");
 
-                System.out.println(startTimestampString);
-                System.out.println(endTimestampString);
-
                 int gameID = Integer.parseInt(gameIDString);
                 Timestamp startTimestamp = Timestamp.valueOf(startTimestampString);
                 Timestamp endTimestamp = Timestamp.valueOf(endTimestampString);
                 boolean won = Boolean.parseBoolean(wonString);
-
-
-                System.out.println("GAME HISTORY");
-                System.out.println(gameID);
-                System.out.println(startTimestamp);
-                System.out.println(endTimestamp);
-                System.out.println(won);
-                System.out.println(enemy);
 
                 GameHistoryHeader header = new GameHistoryHeader(gameID, enemy, endTimestamp, startTimestamp, won);
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -31,7 +32,19 @@ public class HomeFragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
-        activity.toolbar.setVisibility(View.VISIBLE);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                activity.runOnUiThread(
+                        () -> {
+                            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_LoginFragment);
+                        }
+                );
+            }
+        };
+        activity.toolbar.setVisibility(View.GONE);
+
+        activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         String username = activity.getString("username");
         binding.greeter.setText("Hello there, " + username + "!");

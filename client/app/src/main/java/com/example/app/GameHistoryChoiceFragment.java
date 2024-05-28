@@ -46,6 +46,7 @@ public class GameHistoryChoiceFragment extends Fragment {
         activity = (MainActivity) getActivity();
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
+        activity.toolbar.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             // I know this looks funny, but that is to make things prettier by not asking server about state of lobbies immediately after leaving
@@ -59,10 +60,6 @@ public class GameHistoryChoiceFragment extends Fragment {
             List<GameHistoryHeader> games = client.getGameHistory();
 
             for (GameHistoryHeader game : games) {
-                MaterialButton button = new MaterialButton(activity);
-
-                // FIXME: This is bad. Add an illustration to symbolize win/loss
-
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
                 String endTimestamp = sdf.format(new Date(game.endTimestamp.getTime()));
 

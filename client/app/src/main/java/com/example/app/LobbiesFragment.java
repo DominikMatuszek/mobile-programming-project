@@ -2,6 +2,7 @@ package com.example.app;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +79,6 @@ public class LobbiesFragment extends Fragment {
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
         binding.createlobby.setOnClickListener((v) -> {
-            System.out.println("Creating lobby BUTTON PRESSED");
             new Thread(() -> {
                 int status = client.createLobby();
 
@@ -87,7 +87,7 @@ public class LobbiesFragment extends Fragment {
                         NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
                     });
                 } else {
-                    System.out.println("Failed to create lobby, this should not happen; status: " + status);
+                    Log.e("Critical", "Failed to create lobby, this should not happen; status: " + status);
                 }
             }).start();
         });

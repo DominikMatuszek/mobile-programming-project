@@ -155,8 +155,6 @@ public class SingularHistoryFragment extends Fragment {
         }
 
         for (TargetState goal : goals) {
-            System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
-
             Location loc = new Location("");
             loc.setLatitude(goal.getLat());
             loc.setLongitude(goal.getLon());
@@ -188,8 +186,6 @@ public class SingularHistoryFragment extends Fragment {
 
     private void setGoalOverlays() {
         List<Overlay> goalOverlays = getGoalsOverlays();
-
-        System.out.println("Goal overlays: " + goalOverlays.size());
 
         mainActivity.runOnUiThread(
                 () -> {

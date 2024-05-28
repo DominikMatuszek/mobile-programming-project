@@ -66,7 +66,6 @@ public class GameMapFragment extends Fragment {
             return;
         }
 
-        System.out.println("Winner is: " + winner);
         mainActivity.saveString("recent_winner", winner);
 
 
@@ -125,9 +124,7 @@ public class GameMapFragment extends Fragment {
                 mainActivity.getString("password")
         );
 
-        System.out.println("Setting goals");
-
-        List<TargetState> goals = null;
+        List<TargetState> goals;
 
         try {
             goals = client.getMatchState();
@@ -169,8 +166,6 @@ public class GameMapFragment extends Fragment {
         }
 
         for (TargetState goal : goals) {
-            System.out.println("Goal: " + goal.getLat() + ", " + goal.getLon() + " by " + goal.getScorer());
-
             Location loc = new Location("");
             loc.setLatitude(goal.getLat());
             loc.setLongitude(goal.getLon());

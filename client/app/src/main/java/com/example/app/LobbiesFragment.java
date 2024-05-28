@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -75,7 +76,19 @@ public class LobbiesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
-        activity.toolbar.setVisibility(View.VISIBLE);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                activity.runOnUiThread(
+                        () -> NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_homeFragment)
+                );
+            }
+        };
+        activity.toolbar.setVisibility(View.GONE);
+
+        activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
         binding.createlobby.setOnClickListener((v) -> {
@@ -83,9 +96,7 @@ public class LobbiesFragment extends Fragment {
                 int status = client.createLobby();
 
                 if (status == 200) {
-                    activity.runOnUiThread(() -> {
-                        NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
-                    });
+                    activity.runOnUiThread(() -> NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment));
                 } else {
                     Log.e("Critical", "Failed to create lobby, this should not happen; status: " + status);
                 }
@@ -93,14 +104,6 @@ public class LobbiesFragment extends Fragment {
         });
 
         new Thread(() -> {
-            // I know this looks funny, but that is to make things prettier by not asking server about state of lobbies immediately after leaving
-            // If we are leaving
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
             List<String> lobbies = getLobbies();
 
             for (String lobby : lobbies) {

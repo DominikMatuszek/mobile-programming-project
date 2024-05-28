@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_lobbiesFragment_to_singularLobbyFragment"
             app:destination="@id/singularLobbyFragment" />
+        <action
+            android:id="@+id/action_lobbiesFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/singularLobbyFragment"

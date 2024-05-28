@@ -146,14 +146,8 @@ public class SingularHistoryFragment extends Fragment {
 
         List<TargetState> goals;
 
-        try {
-            goals = client.getClaims(Integer.parseInt(gameID));
-        } catch (Client.MessedUpMatchStateException e) {
-            // Should absolutely not happen
-            // But if it does
-            // Well alright, keep your secrets
-            return new ArrayList<>();
-        }
+        goals = client.getClaims(Integer.parseInt(gameID));
+
 
         for (TargetState goal : goals) {
             Location loc = new Location("");

@@ -34,7 +34,7 @@ public class SignupFragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
-        binding.button.setOnClickListener((v) -> {
+        binding.button.setOnClickListener(v -> {
                     String username = binding.editTextText.getText().toString();
                     String password = binding.editTextTextPassword.getText().toString();
                     String confirmPassword = binding.editTextTextPassword2.getText().toString();
@@ -50,18 +50,18 @@ public class SignupFragment extends Fragment {
 
                     new Thread(
                             () -> {
-                                int response_code = new Client(username, password).register();
+                                int responseCode = new Client(username, password).register();
 
                                 String title = "Registration successful";
                                 String message = "You can now start using the app!";
-                                String button_text = "OK";
+                                String buttonText = "OK";
 
-                                if (response_code != 201) {
+                                if (responseCode != 201) {
                                     title = "Error";
                                     message = "An error has occurred. Please try again.";
                                 }
 
-                                if (response_code == 409) {
+                                if (responseCode == 409) {
                                     title = "Error";
                                     message = "Username already exists!";
                                 }
@@ -74,13 +74,12 @@ public class SignupFragment extends Fragment {
                                             new AlertDialog.Builder(activity)
                                                     .setTitle(finalTitle)
                                                     .setMessage(finalMessage)
-                                                    .setPositiveButton(button_text, null)
+                                                    .setPositiveButton(buttonText, null)
                                                     .show();
 
-                                            if (response_code == 201) {
+                                            if (responseCode == 201) {
                                                 activity.saveString("username", username);
                                                 activity.saveString("password", password);
-                                                activity.setClient(new Client(username, password));
                                                 NavHostFragment.findNavController(SignupFragment.this).navigate(R.id.action_signupFragment_to_LoginFragment);
                                             }
                                         }

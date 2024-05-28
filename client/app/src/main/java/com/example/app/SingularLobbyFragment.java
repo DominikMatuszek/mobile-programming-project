@@ -15,11 +15,13 @@ import com.example.app.server_wrapper.Client;
 
 import org.json.JSONArray;
 
-public class SingularLobbyFragment extends Fragment {
-    private boolean update = true;
+import java.util.Timer;
 
+public class SingularLobbyFragment extends Fragment {
     private FragmentSingulerLobbyBinding binding;
     private ProgressDialog progressDialog;
+    private MainActivity activity;
+    private Timer refreshTimer;
 
     @Override
     public View onCreateView(
@@ -37,7 +39,6 @@ public class SingularLobbyFragment extends Fragment {
 
     private OpponentInfo getOpponent() {
         try {
-            MainActivity activity = (MainActivity) getActivity();
             String password = activity.getString("password");
             String username = activity.getString("username");
 
@@ -67,75 +68,79 @@ public class SingularLobbyFragment extends Fragment {
         return null;
     }
 
+    private void refreshScreen() {
+        Client client = new Client(
+                activity.getString("username"),
+                activity.getString("password")
+        );
+
+        new Thread(() -> {
+            if (client.amIInActiveMatch()) {
+                refreshTimer.cancel();
+                activity.runOnUiThread(() -> {
+                    try {
+                        NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+            }
+        }
+        ).start();
+
+
+        OpponentInfo opponent = getOpponent();
+
+        String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
+
+        activity.runOnUiThread(() -> {
+            try {
+                binding.opponent.setText(opponentText);
+
+                if (opponent.host) {
+                    binding.waiting.setVisibility(View.VISIBLE);
+                    binding.startGame.setVisibility(View.INVISIBLE);
+                } else {
+                    binding.waiting.setVisibility(View.INVISIBLE);
+                    binding.startGame.setVisibility(View.VISIBLE);
+                }
+
+                if (opponent.username == null) {
+                    binding.startGame.setClickable(false);
+                    binding.startGame.setEnabled(false);
+                } else {
+                    binding.startGame.setClickable(true);
+                    binding.startGame.setEnabled(true);
+                }
+            } catch (NullPointerException npe) {
+                // It happens
+            }
+        });
+        progressDialog.dismiss();
+    }
+
+    private void startRefreshingScreen() {
+        refreshTimer = new Timer();
+        refreshTimer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                refreshScreen();
+            }
+        }, 0, 1000);
+
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         activity.toolbar.setVisibility(View.GONE);
 
-        new Thread(() -> {
-            while (update) {
-                Client client = new Client(
-                        activity.getString("username"),
-                        activity.getString("password")
-                );
-
-                new Thread(() -> {
-                    if (client.amIInActiveMatch()) {
-                        update = false;
-                        activity.runOnUiThread(() -> {
-                            try {
-                                NavHostFragment.findNavController(SingularLobbyFragment.this).navigate(R.id.action_singularLobbyFragment_to_gameMapFragment);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-                    }
-                }
-                ).start();
-
-
-                OpponentInfo opponent = getOpponent();
-
-                String opponentText = opponent.username == null ? "Waiting for opponent..." : "Playing against " + opponent.username;
-
-                activity.runOnUiThread(() -> {
-                    try {
-                        binding.opponent.setText(opponentText);
-
-                        if (opponent.host) {
-                            binding.waiting.setVisibility(View.VISIBLE);
-                            binding.startGame.setVisibility(View.INVISIBLE);
-                        } else {
-                            binding.waiting.setVisibility(View.INVISIBLE);
-                            binding.startGame.setVisibility(View.VISIBLE);
-                        }
-
-                        if (opponent.username == null) {
-                            binding.startGame.setClickable(false);
-                            binding.startGame.setEnabled(false);
-                        } else {
-                            binding.startGame.setClickable(true);
-                            binding.startGame.setEnabled(true);
-                        }
-                    } catch (NullPointerException npe) {
-                        // It happens
-                    }
-                });
-                progressDialog.dismiss();
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
-        binding.startGame.setOnClickListener((v) -> {
+        startRefreshingScreen();
+        
+        binding.startGame.setOnClickListener(v -> {
             Client client = new Client(activity.getString("username"), activity.getString("password"));
 
             // Navigation to the game map is done earlier in the loop
@@ -143,8 +148,8 @@ public class SingularLobbyFragment extends Fragment {
 
         });
 
-        binding.leaveLobby.setOnClickListener((v) -> {
-            update = false;
+        binding.leaveLobby.setOnClickListener(v -> {
+            refreshTimer.cancel();
             Client client = new Client(activity.getString("username"), activity.getString("password"));
 
             new Thread(() -> {
@@ -159,7 +164,7 @@ public class SingularLobbyFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        update = false;
+        refreshTimer.cancel();
 
         String username = ((MainActivity) getActivity()).getString("username");
         String password = ((MainActivity) getActivity()).getString("password");

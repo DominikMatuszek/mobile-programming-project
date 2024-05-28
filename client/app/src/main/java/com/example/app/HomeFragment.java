@@ -48,17 +48,11 @@ public class HomeFragment extends Fragment {
 
         String username = activity.getString("username");
         binding.greeter.setText("Hello there, " + username + "!");
-        binding.lobbyButton.setOnClickListener((v) -> {
-            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_lobbiesFragment);
-        });
+        binding.lobbyButton.setOnClickListener((v) -> NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_lobbiesFragment));
 
-        binding.historyButton.setOnClickListener((v) -> {
-            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_gameHistoryChoiceFragment);
-        });
+        binding.historyButton.setOnClickListener((v) -> NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_gameHistoryChoiceFragment));
 
-        binding.testButton.setOnClickListener((v) -> {
-            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_winnerFragment);
-        });
+        binding.testButton.setOnClickListener((v) -> NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_winnerFragment));
     }
 
     @Override

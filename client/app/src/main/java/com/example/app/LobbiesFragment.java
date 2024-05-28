@@ -72,6 +72,7 @@ public class LobbiesFragment extends Fragment {
         }
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -91,17 +92,16 @@ public class LobbiesFragment extends Fragment {
 
         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
-        binding.createlobby.setOnClickListener((v) -> {
-            new Thread(() -> {
-                int status = client.createLobby();
+        binding.createlobby.setOnClickListener(v ->
+                new Thread(() -> {
+                    int status = client.createLobby();
 
-                if (status == 200) {
-                    activity.runOnUiThread(() -> NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment));
-                } else {
-                    Log.e("Critical", "Failed to create lobby, this should not happen; status: " + status);
-                }
-            }).start();
-        });
+                    if (status == 200) {
+                        activity.runOnUiThread(() -> NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment));
+                    } else {
+                        Log.e("Critical", "Failed to create lobby, this should not happen; status: " + status);
+                    }
+                }).start());
 
         new Thread(() -> {
             List<String> lobbies = getLobbies();
@@ -143,16 +143,14 @@ public class LobbiesFragment extends Fragment {
             button.setText("Join lobby");
 
             button.setOnClickListener(
-                    (v) -> new Thread(() -> {
+                    v -> new Thread(() -> {
                         MainActivity activity = (MainActivity) getActivity();
                         Client client = new Client(activity.getString("username"), activity.getString("password"));
 
                         int status = client.joinLobby(username);
 
                         if (status == 200) {
-                            activity.runOnUiThread(() -> {
-                                NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
-                            });
+                            activity.runOnUiThread(() -> NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment));
                         }
 
                     }).start()

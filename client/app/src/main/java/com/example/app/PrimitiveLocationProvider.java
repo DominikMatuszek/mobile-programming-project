@@ -21,7 +21,7 @@ public class PrimitiveLocationProvider implements IMyLocationProvider {
 
     @Override
     public void stopLocationProvider() {
-
+        
     }
 
     @Override

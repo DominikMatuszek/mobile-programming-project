@@ -36,9 +36,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void handleOnBackPressed() {
                 activity.runOnUiThread(
-                        () -> {
-                            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_LoginFragment);
-                        }
+                        () -> NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_LoginFragment)
                 );
             }
         };

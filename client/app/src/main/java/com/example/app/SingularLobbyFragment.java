@@ -174,8 +174,8 @@ public class SingularLobbyFragment extends Fragment {
     }
 
     private static class OpponentInfo {
-        public String username;
-        public boolean host;
+        public final String username;
+        public final boolean host;
 
         public OpponentInfo(String username, boolean host) {
             this.username = username;

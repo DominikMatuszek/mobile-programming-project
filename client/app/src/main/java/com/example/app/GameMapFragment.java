@@ -129,12 +129,11 @@ public class GameMapFragment extends Fragment {
         try {
             goals = client.getMatchState();
         } catch (Client.MessedUpMatchStateException e) {
-            e.printStackTrace();
 
             // I'm in a match and server throws 409 at me, meaning that the match is over.
             // Fall back to the result screen that seems appropriate.
             // The only way to get here is to ask the server about the result and then to fail to render the screen
-            // because android is android.
+            // because Android is Android.
 
             String probableWinner = mainActivity.getString("recent_winner");
 

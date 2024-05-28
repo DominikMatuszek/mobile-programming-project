@@ -40,6 +40,7 @@ public class GameHistoryChoiceFragment extends Fragment {
 
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -49,14 +50,6 @@ public class GameHistoryChoiceFragment extends Fragment {
         activity.toolbar.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
-            // I know this looks funny, but that is to make things prettier by not asking server about state of lobbies immediately after leaving
-            // If we are leaving
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
             List<GameHistoryHeader> games = client.getGameHistory();
 
             for (GameHistoryHeader game : games) {
@@ -106,13 +99,11 @@ public class GameHistoryChoiceFragment extends Fragment {
 
             MaterialButton button = new MaterialButton(context);
             button.setText("See more");
-            button.setOnClickListener((v) -> {
+            button.setOnClickListener(v -> {
                 // To make sure that Android does not do something funny when it comes to fragments
                 activity.saveString("presentedGameID", String.valueOf(gameID));
 
-                activity.runOnUiThread(() -> {
-                    NavHostFragment.findNavController(GameHistoryChoiceFragment.this).navigate(R.id.action_gameHistoryChoiceFragment_to_singularHistoryFragment);
-                });
+                activity.runOnUiThread(() -> NavHostFragment.findNavController(GameHistoryChoiceFragment.this).navigate(R.id.action_gameHistoryChoiceFragment_to_singularHistoryFragment));
             });
 
             button.setGravity(Gravity.CENTER_VERTICAL);

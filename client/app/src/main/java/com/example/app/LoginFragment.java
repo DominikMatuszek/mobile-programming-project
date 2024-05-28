@@ -62,23 +62,23 @@ public class LoginFragment extends Fragment {
 
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         MainActivity activity = (MainActivity) getActivity();
 
-        String saved_username = activity.getString("username");
-        String saved_password = activity.getString("password");
+        String savedUsername = activity.getString("username");
+        String savedPassword = activity.getString("password");
 
 
-        if (saved_username != null && saved_password != null) {
-            binding.editTextText.setText(saved_username);
-            binding.editTextTextPassword.setText(saved_password);
+        if (savedUsername != null && savedPassword != null) {
+            binding.editTextText.setText(savedUsername);
+            binding.editTextTextPassword.setText(savedPassword);
         }
 
-        binding.signupText.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_LoginFragment_to_signupFragment);
-                }
+        binding.signupText.setOnClickListener(
+                v -> NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_LoginFragment_to_signupFragment)
         );
 
 
@@ -100,13 +100,12 @@ public class LoginFragment extends Fragment {
                     activity.saveString("username", username);
                     activity.saveString("password", password);
                 } else {
-                    activity.runOnUiThread(() -> {
-                                new AlertDialog.Builder(activity)
-                                        .setTitle("Login Failed")
-                                        .setMessage("Invalid username or password")
-                                        .setPositiveButton("Ok", null)
-                                        .show();
-                            }
+                    activity.runOnUiThread(
+                            () -> new AlertDialog.Builder(activity)
+                                    .setTitle("Login Failed")
+                                    .setMessage("Invalid username or password")
+                                    .setPositiveButton("Ok", null)
+                                    .show()
                     );
                 }
             }

@@ -73,6 +73,7 @@ public class SingularHistoryFragment extends Fragment {
             mainActivity.runOnUiThread(
                     NavHostFragment.findNavController(this)::popBackStack
             );
+            return;
         }
 
         Timestamp startTimestamp = header.startTimestamp;

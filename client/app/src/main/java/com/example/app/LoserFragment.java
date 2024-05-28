@@ -38,7 +38,7 @@ public class LoserFragment extends Fragment {
         MainActivity activity = (MainActivity) getActivity();
 
         binding.button2.setOnClickListener(
-                (v) -> activity.runOnUiThread(
+                v -> activity.runOnUiThread(
                         () -> NavHostFragment.findNavController(LoserFragment.this).navigate(R.id.action_loserFragment_to_homeFragment)
                 )
         );

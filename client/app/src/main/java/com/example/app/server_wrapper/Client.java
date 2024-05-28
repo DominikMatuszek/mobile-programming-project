@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Client {
+    private static final String USERNAME_KEY = "username";
+    private static final String PASSWORD_KEY = "password";
     private final String login;
     private final String password;
     private final String serverURL;
@@ -59,10 +61,10 @@ public class Client {
 
         addBody(connection, body);
 
-
         return connection;
     }
 
+    @NonNull
     private HttpURLConnection getFromServer(String method) throws IOException {
         URL url = new URL(serverURL + method);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -73,8 +75,8 @@ public class Client {
 
     public int register() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/register", body);
@@ -87,8 +89,8 @@ public class Client {
 
     public int createLobby() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/createlobby", body);
@@ -102,8 +104,8 @@ public class Client {
 
     public int joinLobby(String lobbyOwner) {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
         body.put("lobby_owner_username", lobbyOwner);
 
         try {
@@ -117,8 +119,8 @@ public class Client {
 
     public int leaveLobby() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection conn = postToServer("/leavelobby", body);
@@ -158,8 +160,8 @@ public class Client {
 
     public int startMatch() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/startmatch", body);
@@ -172,8 +174,8 @@ public class Client {
 
     public int login() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/login", body);
@@ -186,8 +188,8 @@ public class Client {
 
     public int reportPosition(double lon, double lat) {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         body.put("lon", Double.toString(lon));
         body.put("lat", Double.toString(lat));
@@ -244,8 +246,8 @@ public class Client {
 
     public List<TargetState> getMatchState() throws MessedUpMatchStateException {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/getmatchstate", body);
@@ -266,10 +268,10 @@ public class Client {
         }
     }
 
-    public List<TargetState> getClaims(int id) throws MessedUpMatchStateException {
+    public List<TargetState> getClaims(int id) {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
         body.put("game_id", Integer.toString(id));
 
         try {
@@ -289,8 +291,8 @@ public class Client {
 
     public boolean amIInActiveMatch() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/getmatchstate", body);
@@ -303,8 +305,8 @@ public class Client {
 
     public String getWinner() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/getwinner", body);
@@ -329,8 +331,8 @@ public class Client {
 
     public List<GameHistoryHeader> getGameHistory() {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
 
         try {
             HttpURLConnection connection = postToServer("/getmatchhistory", body);
@@ -387,8 +389,8 @@ public class Client {
 
     public List<Location> getLocations(String gameID) {
         Map<String, String> body = new HashMap<>();
-        body.put("username", login);
-        body.put("password", password);
+        body.put(USERNAME_KEY, login);
+        body.put(PASSWORD_KEY, password);
         body.put("game_id", gameID);
 
         try {
@@ -428,10 +430,11 @@ public class Client {
 
     }
 
-
-    public class MessedUpMatchStateException extends Exception {
+    public static class MessedUpMatchStateException extends Exception {
         public MessedUpMatchStateException(String message) {
             super(message);
         }
     }
+
+
 }

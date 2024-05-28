@@ -140,21 +140,19 @@ public class LobbiesFragment extends Fragment {
             button.setText("Join lobby");
 
             button.setOnClickListener(
-                    (v) -> {
-                        new Thread(() -> {
-                            MainActivity activity = (MainActivity) getActivity();
-                            Client client = new Client(activity.getString("username"), activity.getString("password"));
+                    (v) -> new Thread(() -> {
+                        MainActivity activity = (MainActivity) getActivity();
+                        Client client = new Client(activity.getString("username"), activity.getString("password"));
 
-                            int status = client.joinLobby(username);
+                        int status = client.joinLobby(username);
 
-                            if (status == 200) {
-                                activity.runOnUiThread(() -> {
-                                    NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
-                                });
-                            }
+                        if (status == 200) {
+                            activity.runOnUiThread(() -> {
+                                NavHostFragment.findNavController(LobbiesFragment.this).navigate(R.id.action_lobbiesFragment_to_singularLobbyFragment);
+                            });
+                        }
 
-                        }).start();
-                    }
+                    }).start()
             );
 
             this.addView(iconWithText);

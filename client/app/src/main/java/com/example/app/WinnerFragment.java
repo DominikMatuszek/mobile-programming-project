@@ -39,7 +39,7 @@ public class WinnerFragment extends Fragment {
         MainActivity activity = (MainActivity) getActivity();
 
         binding.button2.setOnClickListener(
-                (v) -> activity.runOnUiThread(
+                v -> activity.runOnUiThread(
                         () -> NavHostFragment.findNavController(WinnerFragment.this).navigate(R.id.action_winnerFragment_to_homeFragment)
                 )
         );

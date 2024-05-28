@@ -39,7 +39,6 @@ public class OverlayFactory {
                 break;
         }
 
-        // Drawable drawable = ResourcesCompat.getDrawable(res, R.drawable.ic_launcher_foreground, null);
         CustomMarkerOverlay overlay = new CustomMarkerOverlay(drawable, new PrimitiveLocationProvider(supp), mapView);
         overlay.enableMyLocation();
 

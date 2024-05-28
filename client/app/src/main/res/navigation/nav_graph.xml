@@ -115,9 +115,6 @@
         <action
             android:id="@+id/action_gameHistoryChoiceFragment_to_singularHistoryFragment"
             app:destination="@id/singularHistoryFragment" />
-        <action
-            android:id="@+id/action_gameHistoryChoiceFragment_to_singularHistoryFragmentProxy"
-            app:destination="@id/singularHistoryFragmentProxy" />
     </fragment>
     <fragment
         android:id="@+id/singularHistoryFragment"

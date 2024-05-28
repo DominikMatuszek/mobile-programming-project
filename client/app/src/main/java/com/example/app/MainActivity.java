@@ -6,8 +6,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -31,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +40,35 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private LocationManager locationManager;
     private Runnable fabRunnable = null;
+    private Timer locationUpdateTimer;
+
+    private void startUpdatingLocation() {
+        locationUpdateTimer = new Timer();
+
+        LocationListener locationListener = (Location l) -> lastKnownLocation = l;
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(
+                        () -> {
+                            try {
+                                locationManager.requestLocationUpdates(
+                                        "fused",
+                                        1L,
+                                        0.1f,
+                                        locationListener);
+                            } catch (SecurityException e) {
+                                // We will wait
+                            }
+                        }
+                );
+            }
+        };
+
+
+        locationUpdateTimer.schedule(task, 0, 3000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = binding.toolbar;
 
-        request_permissions();
+        requestPermissions();
 
         Configuration.getInstance().setUserAgentValue("MPP/0.1");
 
@@ -68,41 +97,9 @@ public class MainActivity extends AppCompatActivity {
         mapConfig.setOsmdroidBasePath(basePath);
         mapConfig.setOsmdroidTileCache(tileCache);
 
+        startUpdatingLocation();
 
-        // We are very smart people here
-
-
-        LocationListener locationListener = (Location l) -> {
-            lastKnownLocation = l;
-        };
-
-        new Thread(
-                () -> {
-                    while (true) {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        runOnUiThread(
-                                () -> {
-                                    try {
-                                        locationManager.requestLocationUpdates(
-                                                "fused",
-                                                1L,
-                                                0.1f,
-                                                locationListener);
-                                    } catch (SecurityException e) {
-                                        // We will wait
-                                    }
-                                }
-                        );
-                    }
-                }
-        ).start();
-
-        binding.floatingActionButton.setOnClickListener((v) -> {
+        binding.floatingActionButton.setOnClickListener(v -> {
             if (fabRunnable != null) {
                 fabRunnable.run();
             }
@@ -117,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void request_permissions() {
+    private void requestPermissions() {
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{
@@ -127,29 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 },
                 1
         );
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -173,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Returns 0 if the key does not exist
     @Nullable
     public String getString(String key) {
 
@@ -187,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
-    
+
     public void setFabRunnable(Runnable fabRunnable) {
         this.fabRunnable = fabRunnable;
         binding.floatingActionButton.setVisibility(View.VISIBLE);
